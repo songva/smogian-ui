@@ -1,0 +1,24 @@
+
+@property --radial-percentage {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 1%;
+}
+
+@keyframes paintKeyframes {
+  from {
+    --radial-percentage : 0%;
+  }
+  to {
+    --radial-percentage: 100%;
+  }
+}
+
+@keyframes fadeKeyframes {
+  from {
+    --radial-percentage : 100%;
+  }
+  to {
+    --radial-percentage: 0%;
+  }
+}
