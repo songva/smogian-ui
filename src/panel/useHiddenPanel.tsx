@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 import { macMahon } from '../common/constants';
 import useOrientation from '../common/useOrientation';
@@ -16,7 +16,11 @@ import {
 import seatService from '../seat/seatService';
 import { BlockProps } from '../block/Block';
 
-type useHiddenPanelReturn = ConnectDropTarget;
+type useHiddenPanelReturn = {
+	anchorLeg: number;
+	setAnchorLeg: (anchorLeg: number) => void;
+	dummyRef: ConnectDropTarget;
+};
 
 const useHiddenPanel = (): useHiddenPanelReturn => {
 	useOrientation();
@@ -25,6 +29,7 @@ const useHiddenPanel = (): useHiddenPanelReturn => {
 	const { bumper, setBumper } = useContext<BumperContextProps>(BumperContext);
 	const { kidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
 	const { isLandscape, stageOrientationLock } = useContext<OrientationContextProps>(OrientationContext);
+	const [anchorLeg, setAnchorLeg] = useState<number>(NaN);
 	const { updateSeat } = seatService;
 	const [, dummyRef] = useDrop(
 		() => ({
@@ -55,7 +60,7 @@ const useHiddenPanel = (): useHiddenPanelReturn => {
 		[benchBlockList, stagedBlockList, bumper]
 	);
 
-	return dummyRef;
+	return { anchorLeg, setAnchorLeg, dummyRef };
 };
 
 export default useHiddenPanel;

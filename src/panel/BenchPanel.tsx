@@ -1,16 +1,8 @@
-import { CSSProperties, FC, memo } from 'react';
+import { FC, memo } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
-
 import { ThrottleContext } from '../common/contexts';
-
 import Seat from '../seat/Seat';
 import usePanel from './usePanel';
-
-const panelStyle: CSSProperties = {
-	display: 'grid',
-	position: 'relative',
-	gridGap: '2dvmin',
-};
 
 const styles = StyleSheet.create({
 	portraitPanel: {
@@ -30,32 +22,25 @@ const styles = StyleSheet.create({
 			justifySelf: 'left',
 		},
 	},
-	portraitGrid: {
+	grid: {
+		display: 'grid',
+		position: 'relative',
+		gridGap: '2dvmin',
+		gridTemplateColumns: 'repeat(4, 1fr)',
+	},
+	gridPortrait: {
 		'@media (max-aspect-ratio: 1)': {
 			gridTemplateColumns: 'repeat(6, 1fr)',
-		},
-	},
-	landscapeGrid: {
-		'@media (min-aspect-ratio: 1)': {
-			gridTemplateColumns: 'repeat(4, 1fr)',
 		},
 	},
 });
 
 const BenchPanel: FC = () => {
-	const { blockList, onWheelScroll, isLandscape } = usePanel();
+	const { blockList, onWheelScroll } = usePanel();
 
 	return (
-		<section
-			key="ios-safari-layout-fix"
-			className={css(styles.portraitPanel, styles.landscapePanel, styles.exlandscapePanel)}
-		>
-			<div
-				className={css(styles.landscapeGrid, styles.portraitGrid)}
-				style={panelStyle}
-				key="bench"
-				data-testid="bench"
-			>
+		<section className={css(styles.portraitPanel, styles.landscapePanel, styles.exlandscapePanel)}>
+			<div className={css(styles.grid, styles.gridPortrait)} key="bench" data-testid="bench">
 				<ThrottleContext.Provider value={onWheelScroll}>
 					{blockList.map((item, index) => (
 						<Seat

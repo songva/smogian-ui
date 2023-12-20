@@ -14,6 +14,7 @@ export interface PalettesMap {
 export enum TransitionDuration {
 	STATIC = '0ms',
 	ANIMATE = '300ms',
+	VICTORY = '3s',
 }
 export enum Opacity {
 	INVISABLE = 0,

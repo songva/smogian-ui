@@ -2,6 +2,7 @@ import { ReactElement } from 'react';
 
 import useHiddenPanel from './useHiddenPanel';
 import { StyleSheet, css } from 'aphrodite/no-important';
+import { AnchorLegConext } from '../common/contexts';
 
 const styles = StyleSheet.create({
 	hiddenPanelLandscape: {
@@ -36,20 +37,22 @@ const styles = StyleSheet.create({
 });
 
 const HiddenPanel: (props: { children: ReactElement[] }) => ReactElement = ({ children }) => {
-	const dummyRef = useHiddenPanel();
+	const { anchorLeg, setAnchorLeg, dummyRef } = useHiddenPanel();
 
 	return (
-		<div
-			ref={dummyRef}
-			className={css(
-				styles.hiddenPanelLandscape,
-				styles.hiddenPanelExLandscape,
-				styles.hiddenPanelPortrait,
-				styles.hiddenPanelExPortrait
-			)}
-		>
-			{children}
-		</div>
+		<AnchorLegConext.Provider value={{ anchorLeg, setAnchorLeg }}>
+			<div
+				ref={dummyRef}
+				className={css(
+					styles.hiddenPanelLandscape,
+					styles.hiddenPanelExLandscape,
+					styles.hiddenPanelPortrait,
+					styles.hiddenPanelExPortrait
+				)}
+			>
+				{children}
+			</div>
+		</AnchorLegConext.Provider>
 	);
 };
 

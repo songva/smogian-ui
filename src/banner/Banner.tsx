@@ -1,7 +1,7 @@
 import { CSSProperties, FC, ReactNode, memo, useContext } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import { titleBackgroundPath } from '../common/constants';
-import { OrientationContext, OrientationContextProps, ThemeContext, ThemeContextProps } from '../common/contexts';
+import { ThemeContext, ThemeContextProps } from '../common/contexts';
 import Menu from '../menu/Menu';
 
 const styles = StyleSheet.create({

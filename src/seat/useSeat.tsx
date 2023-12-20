@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 import {
+	AnchorLegConext,
+	AnchorLegConextProps,
 	BenchContext,
 	BlockContextProps,
 	BumperContext,
@@ -10,8 +12,6 @@ import {
 	OrientationContext,
 	OrientationContextProps,
 	StagedContext,
-	ThemeContext,
-	ThemeContextProps,
 } from '../common/contexts';
 import { macMahon } from '../common/constants';
 import seatService from './seatService';
@@ -24,7 +24,6 @@ interface useSeatProps {
 
 type useSeatReturn = {
 	dropRef: ConnectDropTarget;
-	darkTheme: boolean;
 };
 
 const useSeat: (props: useSeatProps) => useSeatReturn = ({ seatNumber, isStage }) => {
@@ -33,7 +32,7 @@ const useSeat: (props: useSeatProps) => useSeatReturn = ({ seatNumber, isStage }
 	const { bumper, setBumper } = useContext<BumperContextProps>(BumperContext);
 	const { kidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
 	const { isLandscape, stageOrientationLock } = useContext<OrientationContextProps>(OrientationContext);
-	const { darkTheme } = useContext<ThemeContextProps>(ThemeContext);
+	const { setAnchorLeg } = useContext<AnchorLegConextProps>(AnchorLegConext);
 	const { updateSeat } = seatService;
 
 	const [, dropRef] = useDrop(
@@ -60,12 +59,17 @@ const useSeat: (props: useSeatProps) => useSeatReturn = ({ seatNumber, isStage }
 					updatedBumper && setBumper(updatedBumper);
 					updatedBenchBlockList && setBenchBlockList(updatedBenchBlockList);
 					updatedStagedBlockList && setStagedBlockList(updatedStagedBlockList);
+					if (updatedStagedBlockList.filter(stagedBlock => stagedBlock).length === 24) {
+						setAnchorLeg(seatNumber);
+					} else {
+						setAnchorLeg(NaN);
+					}
 				}
 			},
 		}),
 		[isStage, seatNumber, stagedBlockList, benchBlockList, bumper]
 	);
-	return { dropRef, darkTheme };
+	return { dropRef };
 };
 
 export default useSeat;

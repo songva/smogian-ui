@@ -41,7 +41,11 @@ const useApp = (): useAppReturn => {
 	const [ratio, setRatio] = useState<number>(window.innerWidth / window.innerHeight);
 
 	const { macMahonSettings, setMacMahonSettings } = useLocalStorage();
-	const [palettes, setPalettes] = useState<string>(macMahonSettings.palettes || 'defaultPalettes');
+	const originPalettes =
+		macMahonSettings.palettes && palettesMap[macMahonSettings.palettes || 'defaultPalettes']
+			? macMahonSettings.palettes
+			: 'defaultPalettes';
+	const [palettes, setPalettes] = useState<string>(originPalettes);
 	const [kidsMode, setKidsMode] = useState<boolean>(macMahonSettings.kidsMode || false);
 	const [darkTheme, setDarkTheme] = useState<boolean>(macMahonSettings.darkTheme || false);
 	const [stageOrientationLock, setStageOrientationLock] = useState<StageOrientationLock>(

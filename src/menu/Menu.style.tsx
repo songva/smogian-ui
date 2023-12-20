@@ -76,15 +76,14 @@ export default StyleSheet.create({
 
 	commonOption: {
 		height: '100%',
-		width: '100%',
+		aspectRatio: '1 / 1',
 		'-webkit-tap-highlight-color': 'transparent',
 	},
 	shareLinkOption: {
 		height: '100%',
-		width: '100%',
-		'-webkit-tap-highlight-color': 'transparent',
-		maxWidth: '6dvmin',
+		aspectRatio: '1 / 1',
 		maxHeight: '6dvmin',
+		'-webkit-tap-highlight-color': 'transparent',
 	},
 	commonButton: {
 		display: 'flex',
@@ -194,6 +193,7 @@ export default StyleSheet.create({
 		height: '100%',
 		aspectRatio: '1 / 1',
 		cursor: 'pointer',
+		'-webkit-tap-highlight-color': 'transparent',
 	},
 
 	orientation: {

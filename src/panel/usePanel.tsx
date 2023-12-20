@@ -1,13 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 import { DebouncedFunc, throttle } from 'lodash';
-import {
-	BlockList,
-	BumperAnimation,
-	BumperColorAndCoordinates,
-	Palettes,
-	StageOrientationLock,
-} from '../common/interfaces';
+import { BlockList, BumperAnimation, BumperColorAndCoordinates, StageOrientationLock } from '../common/interfaces';
 import {
 	StagedContext,
 	BenchContext,

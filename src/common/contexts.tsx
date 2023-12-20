@@ -36,6 +36,11 @@ export interface KidsModeContextProps {
 	setKidsMode: (kidsMode: boolean) => void;
 }
 
+export interface AnchorLegConextProps {
+	anchorLeg: number;
+	setAnchorLeg: (anchorLeg: number) => void;
+}
+
 const BenchContext = createContext<BlockContextProps>({
 	blockList: [],
 	setBlockList: () => {},
@@ -75,6 +80,11 @@ const KidsModeContext = createContext<KidsModeContextProps>({
 	setKidsMode: () => {},
 });
 
+const AnchorLegConext = createContext<AnchorLegConextProps>({
+	anchorLeg: NaN,
+	setAnchorLeg: () => {},
+});
+
 export {
 	StagedContext,
 	BenchContext,
@@ -83,4 +93,5 @@ export {
 	ThemeContext,
 	OrientationContext,
 	KidsModeContext,
+	AnchorLegConext,
 };

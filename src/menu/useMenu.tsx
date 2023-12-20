@@ -32,7 +32,7 @@ const generateOrientationButtonStyle: (props: {
 			: stageOrientationLock === StageOrientationLock.PORTRAIT
 			? '0%'
 			: '66.7%',
-	transitionDuration: Math.abs(previousStageOrientationLock || 100 - stageOrientationLock) === 2 ? '600ms' : '300ms',
+	transitionDuration: Math.abs((previousStageOrientationLock || 100) - stageOrientationLock) === 2 ? '500ms' : '300ms',
 });
 const generateKidsModeButtonStyle = (kidsMode: boolean): CSSProperties => ({
 	left: kidsMode ? '0%' : '50%',

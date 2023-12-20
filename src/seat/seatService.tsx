@@ -14,7 +14,7 @@ interface AllocatedSeat {
 	direction?: PatternDirection[];
 }
 
-export type updateBumperProps = {
+export type UpdateBumperProps = {
 	seatNumber: number;
 	isTargetingStage: boolean;
 	isSourceFromStage: boolean;
@@ -25,7 +25,7 @@ export type updateBumperProps = {
 	isLandscape: boolean;
 };
 
-export type validateMoveProps = {
+export type ValidateMoveProps = {
 	kidsMode: boolean;
 	stageOrientationLock: StageOrientationLock;
 	isLandscape: boolean;
@@ -35,7 +35,7 @@ export type validateMoveProps = {
 	bumperColor: number | undefined;
 };
 
-export interface updateSeatProps {
+export interface UpdateSeatProps {
 	kidsMode: boolean;
 	item: BlockProps;
 	seat: { seatNumber: number; isStage: boolean };
@@ -46,19 +46,19 @@ export interface updateSeatProps {
 	isLandscape: boolean;
 }
 
-export interface updateSeatReturn {
+export interface UpdateSeatReturn {
 	updatedBumper: BumperColorAndCoordinates | undefined;
 	updatedStagedBlockList: BlockList;
 	updatedBenchBlockList: BlockList;
 }
 
-export interface seatServiceReturn {
-	updateBumper: (param: updateBumperProps) => BumperColorAndCoordinates | undefined;
-	validateMove: (params: validateMoveProps) => boolean;
-	updateSeat: (params: updateSeatProps) => updateSeatReturn | undefined;
+export interface SeatServiceReturn {
+	updateBumper: (param: UpdateBumperProps) => BumperColorAndCoordinates | undefined;
+	validateMove: (params: ValidateMoveProps) => boolean;
+	updateSeat: (params: UpdateSeatProps) => UpdateSeatReturn | undefined;
 }
 
-const seatService: () => seatServiceReturn = () => {
+const seatService: () => SeatServiceReturn = () => {
 	const getDimension: (params: { stageOrientationLock: StageOrientationLock; isLandscape: boolean }) => {
 		width: number;
 		height: number;
@@ -109,7 +109,7 @@ const seatService: () => seatServiceReturn = () => {
 		blockList.map((item, index) => item && allocateSeat(index, width)?.direction).filter(item => item !== undefined)
 			.length;
 
-	const updateBumper: (param: updateBumperProps) => BumperColorAndCoordinates | undefined = ({
+	const updateBumper: (param: UpdateBumperProps) => BumperColorAndCoordinates | undefined = ({
 		seatNumber,
 		isTargetingStage,
 		isSourceFromStage,
@@ -158,7 +158,7 @@ const seatService: () => seatServiceReturn = () => {
 		}
 	};
 
-	const validateMove: (params: validateMoveProps) => boolean = ({
+	const validateMove: (params: ValidateMoveProps) => boolean = ({
 		kidsMode,
 		stageOrientationLock,
 		isLandscape,
@@ -200,7 +200,7 @@ const seatService: () => seatServiceReturn = () => {
 		);
 	};
 
-	const updateSeat: (props: updateSeatProps) => updateSeatReturn | undefined = ({
+	const updateSeat: (props: UpdateSeatProps) => UpdateSeatReturn | undefined = ({
 		kidsMode,
 		stageOrientationLock,
 		isLandscape,
