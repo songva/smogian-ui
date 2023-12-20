@@ -1,7 +1,7 @@
 import { CSSProperties, FC, memo } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
 import { ThrottleContext } from '../common/contexts';
-import { StageOrientationLock } from '../common/interfaces';
+import { BumperAnimation, StageOrientationLock } from '../common/interfaces';
 import { darkBumperColor, ligthBumperColor, palettesMap } from '../common/constants';
 import usePanel from './usePanel';
 import Seat from '../seat/Seat';
@@ -136,7 +136,7 @@ const StagePanel: FC = () => {
 						initial-value: 1%;
 					}
 
-					@keyframes paintKeyframes {
+					@keyframes ${BumperAnimation.PAINT} {
 						from {
 							--radial-percentage : 0%;
 						}
@@ -145,7 +145,7 @@ const StagePanel: FC = () => {
 						}
 					}
 
-					@keyframes fadeKeyframes {
+					@keyframes ${BumperAnimation.FADE} {
 						from {
 							--radial-percentage : 100%;
 						}

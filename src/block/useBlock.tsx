@@ -4,7 +4,9 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import { useDoubleTap } from 'use-double-tap';
 import { macMahon, palettesMap } from '../common/constants';
 import {
+	BlockAnimation,
 	BlockList,
+	BumperAnimation,
 	BumperColorAndCoordinates,
 	Cursor,
 	Opacity,
@@ -46,6 +48,10 @@ export interface UseBlockReturn {
 		transitionDuration: TransitionDuration;
 		transitionDelay: string;
 	};
+	backgroundStyle?: {
+		animationName: string;
+		animationDuration: TransitionDuration;
+	};
 	onWheelScroll?: (event: WheelEvent<HTMLDivElement>) => void;
 	onDoubleTap?: (event: any) => void;
 }
@@ -61,6 +67,7 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, index, patte
 
 	const [rotate, setRotate] = useState<number>(0);
 	const [transitionDuration, setTransitionDuration] = useState<TransitionDuration>(TransitionDuration.STATIC);
+	const [animationName, setAnimationName] = useState<BlockAnimation>(BlockAnimation.EMPTY);
 	const [transitionDelay, setTransitionDelay] = useState<string>('0ms');
 	const [zIndex, setZIndex] = useState(ZIndex.BACK);
 	const freeze = useRef<boolean>(false);
@@ -116,6 +123,7 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, index, patte
 	const rotateBlock = (deltaY: number): void => {
 		const toClockwise = deltaY < 0;
 		setTransitionDuration(TransitionDuration.ANIMATE);
+		setAnimationName(toClockwise ? BlockAnimation.CLOCKWISE : BlockAnimation.ANTICLOCKWISE);
 		setRotate(rotate + (toClockwise ? 90 : -90));
 		setZIndex(ZIndex.FRONT);
 		freeze.current = true;
@@ -141,8 +149,9 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, index, patte
 			setTransitionDuration(TransitionDuration.STATIC);
 			setRotate(0);
 			setZIndex(ZIndex.BACK);
+			setAnimationName(BlockAnimation.EMPTY);
 			freeze.current = false;
-		}, 350);
+		}, Number(TransitionDuration.ANIMATE.replace('ms', '')));
 	};
 
 	const { onClick } = useDoubleTap((event: MouseEvent) => {
@@ -188,6 +197,10 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, index, patte
 			transform: `rotate(${rotate}deg)`,
 			transitionDuration,
 			transitionDelay,
+		},
+		backgroundStyle: {
+			animationName,
+			animationDuration: transitionDuration,
 		},
 		onWheelScroll,
 		onDoubleTap: onClick,

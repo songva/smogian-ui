@@ -11,6 +11,12 @@ export default StyleSheet.create({
 		'-webkit-tap-highlight-color': 'transparent',
 	},
 
+	blockBackgrounds: {
+		position: 'absolute',
+		height: '100%',
+		aspectRatio: '1 / 1',
+	},
+
 	shadow: {
 		borderRadius: '7%',
 		transitionDuration: TransitionDuration.STATIC,
@@ -19,20 +25,18 @@ export default StyleSheet.create({
 		height: '100%',
 	},
 
-	backLayerSvg: {
-		position: 'absolute',
-		borderRadius: '7%',
-		filter: 'brightness(0.85)',
-		transitionDuration: TransitionDuration.STATIC,
-		height: '100%',
-		width: '100%',
-	},
-
 	backLayer: {
 		height: '100%',
 		boxSizing: 'border-box',
 		position: 'absolute',
-		width: '100%',
+		aspectRatio: '1 / 1',
+		borderRadius: '7%',
+		overflow: 'hidden',
+		outline: '1px solid transparent',
+		'-webkit-backface-visibility': 'hidden',
+		transform: 'translateZ(0)',
+		willChange: 'transform',
+		'-webkit-perspective': 1000,
 	},
 
 	topLayerStyles: {
