@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { BlockList, BumperColorAndCoordinates, Palettes, Ratio, StageOrientationLock } from './interfaces';
+import { BlockList, BumperColorAndCoordinates, StageOrientationLock } from './interfaces';
 import { OrientationValue } from './useOrientation';
 
 export interface BlockContextProps {

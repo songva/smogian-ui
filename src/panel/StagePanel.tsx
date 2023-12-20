@@ -3,7 +3,6 @@ import { StyleSheet, css } from 'aphrodite/no-important';
 import { ThrottleContext } from '../common/contexts';
 import usePanel from './usePanel';
 import Seat from '../seat/Seat';
-import './Panel.css';
 import { StageOrientationLock } from '../common/interfaces';
 import { darkBumperColor, ligthBumperColor, palettesMap } from '../common/constants';
 
@@ -77,10 +76,9 @@ const styles = StyleSheet.create({
 });
 
 const StagePanel: FC = () => {
-	const { blockList, onWheelScroll, bumper, palettes, isLandscape, stageOrientationLock, darkTheme, dummyDrop } =
-		usePanel({
-			isStage: true,
-		});
+	const { blockList, onWheelScroll, bumper, palettes, stageOrientationLock, darkTheme, dummyDrop } = usePanel({
+		isStage: true,
+	});
 	const bumperColor = darkTheme ? darkBumperColor : ligthBumperColor;
 	const animationDuration = (bumper.x || 0) > 100 || (bumper.y || 0) > 100 ? '900ms' : '400ms';
 	const animationStyle: CSSProperties = {
@@ -117,6 +115,31 @@ const StagePanel: FC = () => {
 					))}
 				</ThrottleContext.Provider>
 			</div>
+			<style>
+				{`@property --radial-percentage {
+						syntax: "<percentage>";
+						inherits: false;
+						initial-value: 1%;
+					}
+
+					@keyframes paintKeyframes {
+						from {
+							--radial-percentage : 0%;
+						}
+						to {
+							--radial-percentage: 100%;
+						}
+					}
+
+					@keyframes fadeKeyframes {
+						from {
+							--radial-percentage : 100%;
+						}
+						to {
+							--radial-percentage: 0%;
+						}
+					}`}
+			</style>
 		</section>
 	);
 };

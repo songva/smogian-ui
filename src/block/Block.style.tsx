@@ -46,4 +46,20 @@ export default StyleSheet.create({
 	topLayerSvg: {
 		borderRadius: '5%',
 	},
+
+	preview: {
+		height: 'min(11dvh, 8dvw)',
+		aspectRatio: '1 / 1',
+		zIndex: 3,
+	},
+	previewExLandscape: {
+		'@media (min-aspect-ratio: 2 )': {
+			height: '12dvmin',
+		},
+	},
+	previewPortrait: {
+		'@media (max-aspect-ratio: 1)': {
+			height: 'min(11dvw, 8dvh)',
+		},
+	},
 });

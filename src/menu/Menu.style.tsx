@@ -123,7 +123,6 @@ export default StyleSheet.create({
 	commonLinerExPortrait: {
 		'@media (max-aspect-ratio: 2 / 3)': {
 			height: '4.5dvmax',
-			// borderRadius: '1.5dvmin',
 		},
 	},
 	commonLinerDark: {
@@ -181,6 +180,7 @@ export default StyleSheet.create({
 		alignSelf: 'flex-end',
 		minHeight: '10dvh',
 		alignContent: 'flex-end',
+		justifyItems: 'center',
 	},
 	commonTriButtons: {
 		width: '33.3%',
@@ -188,6 +188,12 @@ export default StyleSheet.create({
 	commonDuoButtons: {
 		transitionDuration: '300ms',
 		width: '50%',
+	},
+	paletteButton: {
+		width: '100%',
+		height: '100%',
+		aspectRatio: '1 / 1',
+		cursor: 'pointer',
 	},
 
 	orientation: {

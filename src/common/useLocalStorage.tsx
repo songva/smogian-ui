@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Palettes, StageOrientationLock } from './interfaces';
+import { StageOrientationLock } from './interfaces';
 import { localStorageSettings } from './constants';
 
 interface SettingsProps {

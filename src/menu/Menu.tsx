@@ -63,14 +63,10 @@ const Menu: FC = () => {
 				)}
 			>
 				<div key="menu-palettes" data-testid="menu-palettes" className={css(styles.palettes, styles.palettesPortrait)}>
-					{Object.entries(palettesMap).map(([samplePalettesName, samplePalettes]) => (
+					{Object.entries(palettesMap).map(([samplePalettesName]) => (
 						<div
-							style={{
-								width: '100%',
-								height: '100%',
-								aspectRatio: '1 / 1',
-								opacity: palettes !== samplePalettesName ? 0.4 : 0.8,
-							}}
+							className={css(styles.paletteButton)}
+							style={{ opacity: palettes !== samplePalettesName ? 0.4 : 0.8 }}
 							key={`switch-button-${samplePalettesName}`}
 						>
 							<Block
