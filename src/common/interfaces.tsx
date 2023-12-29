@@ -13,8 +13,8 @@ export interface PalettesMap {
 
 export enum TransitionDuration {
 	STATIC = '0ms',
-	ANIMATE = '3000ms',
-	VICTORY = '3s',
+	ANIMATE = '300ms',
+	VICTORY = '3000ms',
 }
 export enum Opacity {
 	INVISABLE = 0,
@@ -44,6 +44,13 @@ export enum PatternDirection {
 	TOP = 1,
 	RIGHT = 2,
 	BOTTOM = 3,
+}
+
+export enum PatternOrientation {
+	TOP_LEFT = 'tl',
+	TOP_RIGHT = 'tr',
+	BOTTOM_LEFT = 'bl',
+	BOTTOM_RIGHT = 'br',
 }
 
 export enum BumperAnimation {

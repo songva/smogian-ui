@@ -3,20 +3,120 @@
 
 <head>
   <meta http-equiv="Cache-Control" content="max-age: 31536000, no-cache, no-store, must-revalidate">
-
   <meta charset="utf-8" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover" />
-  <meta property="og:image" itemprop="image primaryImageOfPage"
-    content="https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon@2.png?v=73d79a89bded">
   <meta name="HandheldFriendly" content="true">
-  <link rel="shortcut icon" href="./favicon.ico?v=2k4i2088">
-  <link rel="apple-touch-icon" href="./favicon.png?v=2k4i2232">
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="apple-touch-icon" href="./favicon.png">
   <title>MacMahon Squares</title>
+
+  <script>
+    console.log(
+      `%c######################################################\r\n` +
+      `#                                                    #\r\n` +
+      `#    The author of this site is looking for a job    #\r\n` +
+      `#      %csoong.gau@gmail.com%c  Thank you very much      #\r\n` +
+      `#                                                    #\r\n` +
+      `######################################################`
+      , 'color: #00aaf4; font-family: monospace', 'color: #ffb403; font-family: monospace', 'color: #00aaf4; font-family: monospace');
+
+  </script>
+
+
   <style>
+    @property --position-x-percentage {
+      syntax: "<percentage>";
+      inherits: false;
+      initial-value: 65%;
+    }
+
+    @property --position-x-left-percentage {
+      syntax: "<percentage>";
+      inherits: false;
+      initial-value: 64%;
+    }
+
+    @property --position-x-right-percentage {
+      syntax: "<percentage>";
+      inherits: false;
+      initial-value: 66%;
+    }
+
+    @property --position-y-percentage {
+      syntax: "<percentage>";
+      inherits: false;
+      initial-value: 35%;
+    }
+
+    @property --position-y-down-percentage {
+      syntax: "<percentage>";
+      inherits: false;
+      initial-value: 36%;
+    }
+
+    @property --radial-percentage {
+      syntax: "<percentage>";
+      inherits: false;
+      initial-value: 1%;
+    }
+
+    @keyframes clockwiseKeyframes {
+      from {
+        --position-x-left-percentage: 64%;
+        --position-x-percentage: 65%;
+        --position-x-right-percentage: 66%;
+      }
+
+      to {
+        --position-x-left-percentage: 34%;
+        --position-x-percentage: 35%;
+        --position-x-right-percentage: 36%;
+      }
+    }
+
+    @keyframes antiClockwiseKeyframes {
+      from {
+        --position-y-percentage: 35%;
+        --position-y-down-percentage: 36%;
+      }
+
+      to {
+        --position-y-percentage: 65%;
+        --position-y-down-percentage: 66%;
+      }
+    }
+
+    @keyframes paintKeyframes {
+      from {
+        --radial-percentage: 0%;
+      }
+
+      to {
+        --radial-percentage: 100%;
+      }
+    }
+
+    @keyframes fadeKeyframes {
+      from {
+        --radial-percentage: 100%;
+      }
+
+      to {
+        --radial-percentage: 0%;
+      }
+    }
+
+    @font-face {
+      font-family: 'Gill Sans regular';
+      src: url('gill_sans.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
     html {
       -webkit-text-size-adjust: none;
-      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) env(safe-area-inset-left);
     }
 
     body {
@@ -30,17 +130,11 @@
     * {
       touch-action: manipulation;
     }
+
+    :root {
+      --sal: env(safe-area-inset-left);
+    }
   </style>
-  <script>
-    console.log(
-      `%c####################################################\r\n` +
-      `#                                                    #\r\n` +
-      `#    The author of this site is looking for a job    #\r\n` +
-      `#       Email to %csoong.gau@gmail.com%c        #\r\n` +
-      `#                                           #\r\n` +
-      `#############################################`
-      , 'color: #00aaf4', 'color: #ffb403; font-family: monospace', 'color: #00aaf4');
-  </script>
 </head>
 
 <body>

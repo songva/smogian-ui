@@ -1,10 +1,11 @@
 import { CSSProperties, FC, memo } from 'react';
-import { StyleSheet, css } from 'aphrodite/no-important';
+import { css } from 'aphrodite/no-important';
 import { ThrottleContext } from '../common/contexts';
-import { BumperAnimation, StageOrientationLock } from '../common/interfaces';
+import { StageOrientationLock } from '../common/interfaces';
 import { darkBumperColor, ligthBumperColor, palettesMap } from '../common/constants';
 import usePanel from './usePanel';
 import Seat from '../seat/Seat';
+import styles from './Panel.style';
 
 const bumperStyle: CSSProperties = {
 	position: 'relative',
@@ -27,67 +28,6 @@ const stageLandscapeOverrideStyle: CSSProperties = {
 const stagePortraitOverrideStyle: CSSProperties = {
 	gridTemplateColumns: 'repeat(4, 1fr)',
 };
-
-const styles = StyleSheet.create({
-	panel: {
-		justifyContent: 'center',
-		display: 'grid',
-		gridGap: '1px',
-		backgroundColor: '#e4e4e4',
-		position: 'relative',
-		zIndex: 3,
-		border: '0.3dvmin solid white',
-		borderRadius: '0.8vmin',
-		boxShadow: '-0.1vmin 0.1vmin 0vmin 0.4vmin #00000030',
-		backgroundImage:
-			'linear-gradient(to bottom, white 1px, transparent 1px), linear-gradient(to right, white 1px, transparent 1px)',
-		backgroundSize: 'calc(min(11dvh, 8dvw) + 1px) calc(min(11dvh, 8dvw) + 1px)',
-		backgroundPosition: '-1px -1px',
-		gridTemplateColumns: 'repeat(4, 1fr)',
-	},
-	panelLandscape: {
-		'@media (min-aspect-ratio: 2 )': {
-			backgroundSize: 'calc(12dvmin + 1px) calc(12dvmin + 1px)',
-		},
-	},
-	panelPortrait: {
-		'@media (max-aspect-ratio: 1)': {
-			backgroundSize: 'calc(min(11dvw, 8dvh) + 1px) calc(min(11dvw, 8dvh) + 1px)',
-			gridTemplateColumns: 'repeat(6, 1fr)',
-		},
-	},
-	panelDark: {
-		backgroundColor: '#333333',
-		border: '0.4dvmin solid #282828',
-		backgroundImage:
-			'linear-gradient(to bottom, #282828 1px, transparent 1px), linear-gradient(to right, #282828 1px, transparent 1px)',
-		filter: 'brightness(1.25)',
-	},
-
-	bumperPortrait: {
-		'@media (max-aspect-ratio: 1)': {
-			gridRow: 2,
-			justifySelf: 'center',
-		},
-	},
-	bumperLandscape: {
-		'@media (min-aspect-ratio: 1)': {
-			gridColumn: 2,
-			justifySelf: 'left',
-		},
-	},
-	bumperExLandscape: {
-		'@media (min-aspect-ratio: 2)': {
-			justifySelf: 'center',
-		},
-	},
-	portraitGrid: {
-		'@media (max-aspect-ratio: 1)': {},
-	},
-	landscapeGrid: {
-		'@media (min-aspect-ratio: 1)': {},
-	},
-});
 
 const StagePanel: FC = () => {
 	const { blockList, onWheelScroll, bumper, palettes, stageOrientationLock, darkTheme, dummyDrop } = usePanel({
@@ -121,7 +61,12 @@ const StagePanel: FC = () => {
 		>
 			<div
 				style={stageLockStyle}
-				className={css(styles.panel, styles.panelPortrait, styles.panelLandscape, darkTheme && styles.panelDark)}
+				className={css(
+					styles.stagePanel,
+					styles.stagePanelPortrait,
+					styles.stagePanelLandscape,
+					darkTheme && styles.stagePanelDark
+				)}
 			>
 				<ThrottleContext.Provider value={onWheelScroll}>
 					{blockList.map((item, index) => (
@@ -129,31 +74,6 @@ const StagePanel: FC = () => {
 					))}
 				</ThrottleContext.Provider>
 			</div>
-			<style>
-				{`@property --radial-percentage {
-						syntax: "<percentage>";
-						inherits: false;
-						initial-value: 1%;
-					}
-
-					@keyframes ${BumperAnimation.PAINT} {
-						from {
-							--radial-percentage : 0%;
-						}
-						to {
-							--radial-percentage: 100%;
-						}
-					}
-
-					@keyframes ${BumperAnimation.FADE} {
-						from {
-							--radial-percentage : 100%;
-						}
-						to {
-							--radial-percentage: 0%;
-						}
-					}`}
-			</style>
 		</section>
 	);
 };

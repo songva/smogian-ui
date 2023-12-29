@@ -1,6 +1,7 @@
 import { useContext, useEffect } from 'react';
+import { throttle } from 'lodash';
 import { landscapeDimension, protraitDimension } from './constants';
-import { rotateClockwise, rotateAntiClockwise } from './utils';
+import { rotateClockwise, rotateAntiClockwise, isIPhone, getRatio, rotateHalfCircle } from './utils';
 import {
 	BenchContext,
 	BlockContextProps,
@@ -8,7 +9,7 @@ import {
 	OrientationContextProps,
 	StagedContext,
 } from './contexts';
-import { BlockList, StageOrientationLock } from './interfaces';
+import { BlockList, Pattern, StageOrientationLock } from './interfaces';
 import usePrevious from './usePrevious';
 
 export enum OrientationValue {
@@ -18,32 +19,50 @@ export enum OrientationValue {
 	'portrait-secondary' = -90,
 }
 
+export interface GridDimension {
+	rowSpan: number;
+	columnSpan: number;
+}
+
+enum RotateDegree {
+	CLOCKWISE = 90,
+	ANTICLOCKWISE = 270,
+	SEMICIRCLE = 180,
+}
+
 interface RotateProps {
-	isClockwise: boolean;
-	isPanelLandscape: boolean;
+	rotateDegree: RotateDegree;
+	isStageLandscape: boolean;
 	originList: BlockList;
 }
 
-const getRatio = (): number => {
-	if (window.navigator.userAgent.toLowerCase().indexOf('crios') > -1) {
-		return window.outerWidth / window.outerHeight;
-	}
-	return window.innerWidth / window.innerHeight;
+const rotateAttributes: Record<
+	RotateDegree,
+	{ formula: (num: number, dimension: GridDimension) => number; rotateMethod: (pattern: Pattern) => Pattern }
+> = {
+	[RotateDegree.CLOCKWISE]: {
+		formula: (num, dimension) =>
+			(dimension.rowSpan - (num % dimension.rowSpan) - 1) * dimension.columnSpan + Math.floor(num / dimension.rowSpan),
+		rotateMethod: rotateClockwise,
+	},
+	[RotateDegree.ANTICLOCKWISE]: {
+		formula: (num, dimension) =>
+			((num % dimension.rowSpan) + 1) * dimension.columnSpan - Math.floor(num / dimension.rowSpan) - 1,
+		rotateMethod: rotateAntiClockwise,
+	},
+	[RotateDegree.SEMICIRCLE]: {
+		formula: num => 23 - num,
+		rotateMethod: rotateHalfCircle,
+	},
 };
 
-const rotateBlockList: (props: RotateProps) => BlockList = ({ isClockwise, isPanelLandscape, originList }) => {
-	const dimension = isPanelLandscape ? landscapeDimension : protraitDimension;
-
-	const formula = isClockwise
-		? (num: number) => (dimension.row - (num % dimension.row) - 1) * dimension.column + Math.floor(num / dimension.row)
-		: (num: number) => ((num % dimension.row) + 1) * dimension.column - Math.floor(num / dimension.row) - 1;
-
-	const rotateMethod = isClockwise ? rotateClockwise : rotateAntiClockwise;
-
+const rotateBlockList: (props: RotateProps) => BlockList = ({ rotateDegree, isStageLandscape, originList }) => {
+	const dimension = isStageLandscape ? landscapeDimension : protraitDimension;
+	const rotateAttribute = rotateAttributes[rotateDegree];
 	return Array(24)
 		.fill(0)
-		.map((i, index) => originList[formula(index)])
-		.map(block => rotateMethod(block));
+		.map((i, index) => originList[rotateAttribute.formula(index, dimension)])
+		.map(block => (block ? rotateAttribute.rotateMethod(block) : undefined));
 };
 
 const useOrientation = () => {
@@ -53,26 +72,27 @@ const useOrientation = () => {
 	const { blockList: benchBlockList, setBlockList: setBenchBlockList } = useContext<BlockContextProps>(BenchContext);
 	const prevStageOrientationLock = usePrevious(stageOrientationLock);
 
-	const updateOrientation: (event: Event) => void = ({ target }) => {
+	const handleRotateEvent: (event: Event) => void = ({ target }) => {
 		const newOrientation = OrientationValue[(target as ScreenOrientation).type];
+		updateOrientation(newOrientation);
+	};
+
+	const updateOrientation = throttle((newOrientation: OrientationValue) => {
 		if (orientation === newOrientation) {
 			return;
 		}
-
-		const isClockwise =
-			navigator.userAgent.toLowerCase().indexOf('iphone') > -1
-				? orientation - newOrientation === 90
-				: newOrientation - orientation === 90;
+		const factor = isIPhone() ? -1 : 1;
+		const rotateDegree = ((newOrientation - orientation) * factor + 360) % 360;
 
 		const rotatedBenchBlockList = rotateBlockList({
-			isClockwise,
-			isPanelLandscape: !isLandscape,
+			rotateDegree,
+			isStageLandscape: !isLandscape,
 			originList: benchBlockList,
 		});
 		if (stageOrientationLock === StageOrientationLock.UNLOCKED) {
 			const rotatedStagedBlockList = rotateBlockList({
-				isClockwise,
-				isPanelLandscape: !isLandscape,
+				rotateDegree,
+				isStageLandscape: !isLandscape,
 				originList: stagedBlockList,
 			});
 			setStagedBlockList(rotatedStagedBlockList);
@@ -80,19 +100,28 @@ const useOrientation = () => {
 		setOrientation(newOrientation);
 		setBenchBlockList(rotatedBenchBlockList);
 		setRatio(getRatio());
-	};
+	}, 200);
 
-	const updateRatio = () => {
-		setRatio(getRatio());
+	const handleResize = () => {
+		setRatio((prevRatio: number) => {
+			const currentRatio = getRatio();
+			if (prevRatio > 1 && currentRatio < 1) {
+				updateOrientation(OrientationValue['portrait-primary']);
+			}
+			if (prevRatio < 1 && currentRatio > 1) {
+				updateOrientation(OrientationValue['landscape-primary']);
+			}
+			return currentRatio;
+		});
 	};
 
 	useEffect(() => {
-		const orientation = window.screen.orientation;
-		orientation.addEventListener('change', updateOrientation);
-		window.addEventListener('resize', updateRatio);
+		const screeOrientation = window.screen.orientation;
+		screeOrientation.addEventListener('change', handleRotateEvent);
+		window.addEventListener('resize', handleResize);
 		return () => {
-			orientation.removeEventListener('change', updateOrientation);
-			window.removeEventListener('resize', updateRatio);
+			screeOrientation.removeEventListener('change', handleRotateEvent);
+			window.removeEventListener('resize', handleResize);
 		};
 	}, [stagedBlockList, benchBlockList, stageOrientationLock]);
 
@@ -109,7 +138,7 @@ const useOrientation = () => {
 			return;
 		}
 
-		const isPanelLandscape =
+		const isStageLandscape =
 			prevStageOrientationLock === StageOrientationLock.LANDSCAPE
 				? true
 				: prevStageOrientationLock === StageOrientationLock.PORTRAIT
@@ -117,8 +146,8 @@ const useOrientation = () => {
 				: !isLandscape;
 
 		const rotatedStagedBlockList = rotateBlockList({
-			isClockwise: !isPanelLandscape,
-			isPanelLandscape,
+			rotateDegree: isStageLandscape ? RotateDegree.ANTICLOCKWISE : RotateDegree.CLOCKWISE,
+			isStageLandscape: isStageLandscape,
 			originList: stagedBlockList,
 		});
 		setStagedBlockList(rotatedStagedBlockList);

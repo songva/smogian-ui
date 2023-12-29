@@ -7,7 +7,7 @@ import useMenu, { PresetTop } from './useMenu';
 import useSvg from './useSvg';
 import styles from './Menu.style';
 
-const samplePattern: Pattern = [0, 0, 1, 2];
+const samplePattern: Pattern = [1, 2, 0, 0];
 
 const Menu: FC = () => {
 	const {
@@ -70,8 +70,8 @@ const Menu: FC = () => {
 							key={`switch-button-${samplePalettesName}`}
 						>
 							<Block
-								index={-1}
-								isStage={false}
+								seatNumber={-1}
+								isStage
 								pattern={samplePattern}
 								palettes={palettesMap[samplePalettesName]}
 								onClick={() => setPalettes(samplePalettesName)}
@@ -131,7 +131,11 @@ const Menu: FC = () => {
 						</div>
 					</div>
 				</div>
-				<div key="menu-shares" data-testid="menu-shares" className={css(styles.quadSettingRow)}>
+				<div
+					key="menu-shares"
+					data-testid="menu-shares"
+					className={css(styles.quadSettingRow, styles.quadSettingRowExLandscape)}
+				>
 					<div />
 					{facebook(() =>
 						window.open('https://www.facebook.com/sharer.php?u=https://www.smogian.com&quote=MacMahon Squares Online')

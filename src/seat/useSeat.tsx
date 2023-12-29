@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 import {
-	AnchorLegConext,
+	AnchorLegContext,
 	AnchorLegConextProps,
 	BenchContext,
 	BlockContextProps,
@@ -16,6 +16,7 @@ import {
 import { macMahon } from '../common/constants';
 import seatService from './seatService';
 import { BlockProps } from '../block/Block';
+import { PatternOrientation } from '../common/interfaces';
 
 interface useSeatProps {
 	seatNumber: number;
@@ -23,6 +24,7 @@ interface useSeatProps {
 }
 
 type useSeatReturn = {
+	id?: { id: string };
 	dropRef: ConnectDropTarget;
 };
 
@@ -32,18 +34,21 @@ const useSeat: (props: useSeatProps) => useSeatReturn = ({ seatNumber, isStage }
 	const { bumper, setBumper } = useContext<BumperContextProps>(BumperContext);
 	const { kidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
 	const { isLandscape, stageOrientationLock } = useContext<OrientationContextProps>(OrientationContext);
-	const { setAnchorLeg } = useContext<AnchorLegConextProps>(AnchorLegConext);
-	const { updateSeat } = seatService;
+	const { setAnchorLeg } = useContext<AnchorLegConextProps>(AnchorLegContext);
+	const { updateSeat, getDimension } = seatService;
 
 	const [, dropRef] = useDrop(
 		() => ({
 			accept: macMahon,
 			drop: (item: BlockProps) => {
-				console.warn(
-					`from ${item.isStage ? 'stage' : 'unstage'}, @ ${item.index}, to ${
+				/**
+				 keep it as needed for redo or moves counting 
+				 console.warn(
+					`from ${item.isStage ? 'stage' : 'unstage'}, @ ${item.seatNumber}, to ${
 						isStage ? 'stage' : 'unstage'
 					} @ ${seatNumber}`
-				);
+				); 
+				*/
 				const updatedSeat = updateSeat({
 					item,
 					kidsMode,
@@ -69,7 +74,21 @@ const useSeat: (props: useSeatProps) => useSeatReturn = ({ seatNumber, isStage }
 		}),
 		[isStage, seatNumber, stagedBlockList, benchBlockList, bumper]
 	);
-	return { dropRef };
+
+	const stageWidth = getDimension({ isLandscape, stageOrientationLock }).columnSpan;
+	const seatOrientation = isStage
+		? seatNumber === 0
+			? PatternOrientation.TOP_LEFT
+			: seatNumber === stageWidth - 1
+			? PatternOrientation.TOP_RIGHT
+			: seatNumber === 24 - stageWidth
+			? PatternOrientation.BOTTOM_LEFT
+			: seatNumber === 23
+			? PatternOrientation.BOTTOM_RIGHT
+			: undefined
+		: undefined;
+	const id = seatOrientation && { id: `seat-${seatOrientation}` };
+	return { id, dropRef };
 };
 
 export default useSeat;

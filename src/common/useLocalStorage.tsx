@@ -7,6 +7,7 @@ interface SettingsProps {
 	stageOrientationLock?: StageOrientationLock;
 	kidsMode?: boolean;
 	darkTheme?: boolean;
+	tutorialStep?: number;
 }
 
 const useLocalStorage = () => {
@@ -16,7 +17,7 @@ const useLocalStorage = () => {
 	const setMacMahonSettings = (settings: SettingsProps) => {
 		const newSettings = { ...macMahonSettings, ...settings };
 		setAllMacMahonSettings(newSettings);
-		window.localStorage.setItem(localStorageSettings, JSON.stringify(newSettings));
+		localStorage.setItem(localStorageSettings, JSON.stringify(newSettings));
 	};
 
 	return { macMahonSettings, setMacMahonSettings };

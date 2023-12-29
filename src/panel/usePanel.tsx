@@ -1,6 +1,6 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { ConnectDropTarget, useDrop } from 'react-dnd';
-import { DebouncedFunc, throttle } from 'lodash';
+import { DebouncedFunc, sample, shuffle, throttle } from 'lodash';
 import { BlockList, BumperAnimation, BumperColorAndCoordinates, StageOrientationLock } from '../common/interfaces';
 import {
 	StagedContext,
@@ -12,8 +12,12 @@ import {
 	BlockContextProps,
 	OrientationContextProps,
 	OrientationContext,
+	AnchorLegConextProps,
+	AnchorLegContext,
+	TutorialContext,
+	TutorialContextProps,
 } from '../common/contexts';
-import { macMahon } from '../common/constants';
+import { blockSet, macMahon, toasts } from '../common/constants';
 
 type usePanelProps = { isStage?: boolean } | undefined;
 
@@ -23,18 +27,26 @@ interface usePanelReturn {
 	bumper: BumperColorAndCoordinates;
 	palettes: string;
 	isLandscape: boolean;
-	dummyDrop: ConnectDropTarget;
-	darkTheme: boolean;
 	stageOrientationLock: StageOrientationLock;
+	darkTheme: boolean;
+	anchorLeg: number;
+	toast: string;
+	dummyDrop: ConnectDropTarget;
+	reloadPage: () => void;
 }
 
 const usePanel = (props?: usePanelProps): usePanelReturn => {
+	const { setBlockList: setBenchBlockList } = useContext<BlockContextProps>(BenchContext);
+	const { setBlockList: setStageBlockList } = useContext<BlockContextProps>(StagedContext);
 	const blockContext = props?.isStage ? StagedContext : BenchContext;
 	const { blockList } = useContext<BlockContextProps>(blockContext);
 	const { bumper, setBumper } = useContext<BumperContextProps>(BumperContext);
 	const { palettes } = useContext<ThemeContextProps>(ThemeContext);
 	const { isLandscape, stageOrientationLock } = useContext<OrientationContextProps>(OrientationContext);
 	const { darkTheme } = useContext<ThemeContextProps>(ThemeContext);
+	const { anchorLeg, setAnchorLeg } = useContext<AnchorLegConextProps>(AnchorLegContext);
+	const { tutorialStep, setTutorialStep } = useContext<TutorialContextProps>(TutorialContext);
+	const toast = useRef<string>(sample(toasts) || '');
 
 	const onWheelScroll = throttle(
 		(deltaY: number, func: (event: number) => void) => {
@@ -55,10 +67,26 @@ const usePanel = (props?: usePanelProps): usePanelReturn => {
 	}, [bumper.animationName, bumper, setBumper]);
 
 	useEffect(() => {}, [isLandscape]);
+	useEffect(() => {
+		toast.current = sample(toasts) || '';
+	}, [anchorLeg]);
 
 	const [, dummyDrop] = useDrop(() => ({
 		accept: macMahon,
 	}));
+
+	const reloadPage = () => {
+		setBenchBlockList(shuffle(blockSet));
+		setStageBlockList(Array(24).fill(undefined));
+		setAnchorLeg(NaN);
+		setBumper({
+			x: 0,
+			y: 0,
+			newBumperColor: undefined,
+			animationName: BumperAnimation.FADE,
+		});
+		tutorialStep > 0 && setTutorialStep(2);
+	};
 
 	return {
 		blockList,
@@ -68,7 +96,10 @@ const usePanel = (props?: usePanelProps): usePanelReturn => {
 		isLandscape,
 		stageOrientationLock,
 		darkTheme,
+		anchorLeg,
+		toast: toast.current,
 		dummyDrop,
+		reloadPage,
 	};
 };
 

@@ -7,10 +7,10 @@ import styles from './Block.style';
 const BlockPreview: FC = () => {
 	const preview = usePreview();
 	if (preview.display && preview.monitor.getItem()) {
-		const { index, isStage, pattern } = preview.monitor.getItem<BlockProps>();
+		const { seatNumber, isStage, pattern } = preview.monitor.getItem<BlockProps>();
 		return (
 			<div style={preview.style} className={css(styles.preview, styles.previewExLandscape, styles.previewPortrait)}>
-				<Block index={index} isStage={isStage} pattern={pattern} />
+				<Block seatNumber={seatNumber} isStage={isStage} pattern={pattern} />
 			</div>
 		);
 	}

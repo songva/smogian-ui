@@ -1,13 +1,12 @@
 import { StyleSheet } from 'aphrodite/no-important';
-import { TransitionDuration } from '../common/interfaces';
 
 export default StyleSheet.create({
 	block: {
-		position: 'relative',
 		height: '100%',
 		width: '100%',
+		position: 'relative',
 		userSelect: 'none',
-		transform: 'translate3d(0, 0, 0)',
+		transform: 'translateZ(0)',
 		'-webkit-tap-highlight-color': 'transparent',
 	},
 
@@ -18,33 +17,40 @@ export default StyleSheet.create({
 	},
 
 	shadow: {
-		borderRadius: '7%',
-		transitionDuration: TransitionDuration.STATIC,
-		transform: 'rotate(0deg)',
-		boxShadow: 'inset 0px 0px 6px 2px #00000050',
 		height: '100%',
+		aspectRatio: '1 / 1',
+		borderRadius: '7%',
+		boxShadow: 'inset 0px 0px 6px 2px #00000033',
+		position: 'absolute',
 	},
 
 	backLayer: {
 		height: '100%',
+		aspectRatio: '1 / 1',
 		boxSizing: 'border-box',
 		position: 'absolute',
-		aspectRatio: '1 / 1',
 		borderRadius: '7%',
 		overflow: 'hidden',
+		filter: 'brightness(0.85)',
 		outline: '1px solid transparent',
-		'-webkit-backface-visibility': 'hidden',
 		transform: 'translateZ(0)',
-		willChange: 'transform',
-		'-webkit-perspective': 1000,
 	},
 
 	topLayerStyles: {
-		top: '2.5%',
-		left: '5%',
-		position: 'absolute',
 		width: '92%',
-		height: '92%',
+		aspectRatio: '1 / 1',
+		top: '2.3%',
+		left: '5.2%',
+		position: 'absolute',
+		borderRadius: '5%',
+		overflow: 'hidden',
+		outline: '1px solid transparent',
+		transform: 'translateZ(0)',
+		willChange: 'transform',
+		'-webkit-perspective': 1000,
+		'-webkit-backface-visibility': 'hidden',
+		'-webkit-font-smoothing': 'antialiased',
+		'-moz-osx-font-smoothing': 'grayscale',
 	},
 
 	topLayerSvg: {
@@ -54,7 +60,8 @@ export default StyleSheet.create({
 	preview: {
 		height: 'min(11dvh, 8dvw)',
 		aspectRatio: '1 / 1',
-		zIndex: 3,
+		zIndex: 6,
+		cursor: 'grabbing',
 	},
 	previewExLandscape: {
 		'@media (min-aspect-ratio: 2 )': {

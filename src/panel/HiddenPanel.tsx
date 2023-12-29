@@ -1,58 +1,30 @@
 import { ReactElement } from 'react';
 
 import useHiddenPanel from './useHiddenPanel';
-import { StyleSheet, css } from 'aphrodite/no-important';
-import { AnchorLegConext } from '../common/contexts';
-
-const styles = StyleSheet.create({
-	hiddenPanelLandscape: {
-		'@media (min-aspect-ratio: 1)': {
-			display: 'grid',
-			alignItems: 'center',
-			gridTemplateColumns:
-				'calc((100dvw - min(144dvh, 84dvw)) / 2 + 0.5dvh) auto auto calc((100dvw - min(144dvh, 84dvw)) / 2 + 0.5dvh)',
-			height: '90dvh',
-		},
-	},
-	hiddenPanelExLandscape: {
-		'@media (min-aspect-ratio: 2)': {
-			gridTemplateColumns: 'calc(50dvw - 53dvmin) 6fr 4fr',
-			height: '100dvh',
-		},
-	},
-	hiddenPanelPortrait: {
-		'@media (max-aspect-ratio: 1)': {
-			display: 'grid',
-			alignItems: 'center',
-			height: 'calc(100dvh - 8dvw)',
-			gridTemplateRows: '4dvw repeat(2, 1fr) 4dvw',
-			justifyContent: 'center',
-		},
-	},
-	hiddenPanelExPortrait: {
-		'@media (max-aspect-ratio: 3 / 5)': {
-			gridTemplateRows: '0 1fr auto 30dvmin',
-		},
-	},
-});
+import { css } from 'aphrodite/no-important';
+import { AnchorLegContext } from '../common/contexts';
+import styles from './Panel.style';
+import { isIOSChrome, isIOSSafari } from '../common/utils';
 
 const HiddenPanel: (props: { children: ReactElement[] }) => ReactElement = ({ children }) => {
 	const { anchorLeg, setAnchorLeg, dummyRef } = useHiddenPanel();
 
 	return (
-		<AnchorLegConext.Provider value={{ anchorLeg, setAnchorLeg }}>
+		<AnchorLegContext.Provider value={{ anchorLeg, setAnchorLeg }}>
 			<div
 				ref={dummyRef}
 				className={css(
 					styles.hiddenPanelLandscape,
 					styles.hiddenPanelExLandscape,
 					styles.hiddenPanelPortrait,
-					styles.hiddenPanelExPortrait
+					styles.hiddenPanelExPortrait,
+					isIOSChrome() && styles.hiddenPanelIPhoneChromeOverride,
+					isIOSSafari() && styles.hiddenPanelIPhoneSafariOverride
 				)}
 			>
 				{children}
 			</div>
-		</AnchorLegConext.Provider>
+		</AnchorLegContext.Provider>
 	);
 };
 

@@ -15,6 +15,7 @@ import {
 } from '../common/contexts';
 import seatService from '../seat/seatService';
 import { BlockProps } from '../block/Block';
+import useLocalStorage from '../common/useLocalStorage';
 
 type useHiddenPanelReturn = {
 	anchorLeg: number;
@@ -30,6 +31,7 @@ const useHiddenPanel = (): useHiddenPanelReturn => {
 	const { kidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
 	const { isLandscape, stageOrientationLock } = useContext<OrientationContextProps>(OrientationContext);
 	const [anchorLeg, setAnchorLeg] = useState<number>(NaN);
+
 	const { updateSeat } = seatService;
 	const [, dummyRef] = useDrop(
 		() => ({

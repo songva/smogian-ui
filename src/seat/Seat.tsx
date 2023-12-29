@@ -14,7 +14,6 @@ export interface SeatProps {
 const styles = StyleSheet.create({
 	seat: {
 		borderRadius: '0.8vmin',
-		position: 'relative',
 		height: 'min(11dvh, 8dvw)',
 		aspectRatio: '1 / 1',
 		userSelect: 'none',
@@ -32,15 +31,16 @@ const styles = StyleSheet.create({
 });
 
 const Seat: FC<SeatProps> = ({ occupier, seatNumber, isStage }) => {
-	const { dropRef } = useSeat({ seatNumber, isStage });
+	const { id, dropRef } = useSeat({ seatNumber, isStage });
 
 	return (
 		<div
+			{...id}
 			ref={dropRef}
 			className={css(styles.seat, styles.seatExLandscape, styles.seatPortrait)}
 			data-testid={`${isStage ? `stage` : `bench`}-seat-${seatNumber}`}
 		>
-			{occupier && <Block index={seatNumber} pattern={occupier} isStage={isStage} />}
+			{occupier && <Block seatNumber={seatNumber} pattern={occupier} isStage={isStage} />}
 		</div>
 	);
 };

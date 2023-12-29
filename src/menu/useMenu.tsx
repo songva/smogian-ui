@@ -1,6 +1,6 @@
 import { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
+import { uniq } from 'lodash';
 import {
-	BenchContext,
 	BlockContextProps,
 	BumperContext,
 	BumperContextProps,
@@ -12,10 +12,9 @@ import {
 	ThemeContext,
 	ThemeContextProps,
 } from '../common/contexts';
-import { Ratio, StageOrientationLock } from '../common/interfaces';
-import { shuffle } from 'lodash';
-import { blockSet } from '../common/constants';
-import { lightThemeStyle, darkThemeStyle } from '../app/App.styles';
+import { BumperAnimation, Ratio, StageOrientationLock } from '../common/interfaces';
+import seatService from '../seat/seatService';
+import { lightThemeStyle, darkThemeStyle } from '../app/App.style';
 
 export const enum PresetTop {
 	HIDE = '2dvmin - 100% - 3px',
@@ -44,23 +43,23 @@ const generateDarkModeButtonStyle = (darkTheme: boolean): CSSProperties => ({
 const useMenu = () => {
 	const { palettes, darkTheme, setPalettes, setDarkTheme } = useContext<ThemeContextProps>(ThemeContext);
 	const { kidsMode, setKidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
-	const { setBlockList: setStagedBlockList } = useContext<BlockContextProps>(StagedContext);
-	const { setBlockList: setBenchBlockList } = useContext<BlockContextProps>(BenchContext);
+	const { blockList, setBlockList } = useContext<BlockContextProps>(StagedContext);
 	const { setBumper } = useContext<BumperContextProps>(BumperContext);
-	const { ratio, stageOrientationLock, setStageOrientationLock } =
+	const { ratio, stageOrientationLock, isLandscape, setStageOrientationLock } =
 		useContext<OrientationContextProps>(OrientationContext);
 	const [transition, setTransition] = useState<string>('');
 	const [presetTop, setPresetTop] = useState<string>(ratio >= Ratio.LANDSCAPE ? PresetTop.SHOW : PresetTop.HIDE);
 	const [offsetTop, setOffsetTop] = useState<string>('0px');
 	const touchStartY = useRef<number>(0);
-	const lastClientY = useRef<number>(0);
+	const previousClientY = useRef<number>(0);
 	const trendDirection = useRef<number>(0);
 	const menuLiftRef = useRef<HTMLDivElement>(null);
 	const overlayRef = useRef<HTMLDivElement>(null);
 	const orientationButtonStyle = useRef<CSSProperties>(
 		generateOrientationButtonStyle({ previousStageOrientationLock: undefined, stageOrientationLock })
 	);
-
+	const { getDimension, allocateSeat } = seatService;
+	const stageColumnSpan = getDimension({ isLandscape, stageOrientationLock }).columnSpan;
 	const menuHeight = Math.max(window.innerHeight, window.innerWidth) * 0.29;
 
 	useEffect(() => {
@@ -82,13 +81,13 @@ const useMenu = () => {
 	const onTouchMove = (currentY: number) => {
 		setTransition('none');
 		setTimeout(() => {
-			lastClientY.current = currentY;
+			previousClientY.current = currentY;
 		}, 1);
 		if (touchStartY.current === 0) {
 			touchStartY.current = currentY;
 			return;
 		}
-		const deltaY = currentY - lastClientY.current;
+		const deltaY = currentY - previousClientY.current;
 		trendDirection.current = deltaY;
 		const offsetY = currentY - touchStartY.current;
 		if (presetTop === PresetTop.HIDE) {
@@ -104,7 +103,7 @@ const useMenu = () => {
 		setTimeout(() => setTransition('none'), 290);
 
 		const presetTopOnTheFence =
-			Math.abs(lastClientY.current - touchStartY.current) > menuHeight / 2 === (presetTop === PresetTop.HIDE)
+			Math.abs(previousClientY.current - touchStartY.current) > menuHeight / 2 === (presetTop === PresetTop.HIDE)
 				? PresetTop.SHOW
 				: PresetTop.HIDE;
 		setPresetTop(
@@ -112,7 +111,7 @@ const useMenu = () => {
 		);
 		setOffsetTop('0px');
 		touchStartY.current = 0;
-		lastClientY.current = 0;
+		previousClientY.current = 0;
 	};
 
 	const onMouseDown = () => {
@@ -143,12 +142,28 @@ const useMenu = () => {
 	};
 
 	const toggleKidsMode = () => {
-		if (kidsMode) {
-			setStagedBlockList(Array(24).fill(undefined));
-			setBenchBlockList(shuffle(blockSet));
+		if (!kidsMode) {
+			setBumper({ x: 0, y: 0 });
+			setKidsMode(!kidsMode);
+		} else {
+			setKidsMode(!kidsMode);
+			const bumperColor = uniq(
+				blockList
+					.map((block, seatNumber) => (block ? { pattern: block, seatNumber } : { seatNumber: -1 }))
+					.filter(block => block.seatNumber >= 0)
+					.map(block =>
+						(allocateSeat({ seatNumber: block.seatNumber, columnSpan: stageColumnSpan })?.direction || []).map(
+							direction => (block.pattern || [])[direction]
+						)
+					)
+					.flat()
+			);
+			if (bumperColor && bumperColor.length <= 1) {
+				setBumper({ x: 50, y: 50, newBumperColor: bumperColor[0], bumperColor: bumperColor[0] });
+			} else {
+				setTimeout(() => setKidsMode(kidsMode), 100);
+			}
 		}
-		setBumper({ x: 0, y: 0 });
-		setKidsMode(!kidsMode);
 	};
 	const toggleDarkMode = () => {
 		window.document.documentElement.style.backgroundColor = darkTheme

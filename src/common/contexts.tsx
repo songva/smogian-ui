@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { Dispatch, SetStateAction, createContext } from 'react';
 import { BlockList, BumperColorAndCoordinates, StageOrientationLock } from './interfaces';
 import { OrientationValue } from './useOrientation';
 
@@ -28,7 +28,7 @@ export interface OrientationContextProps {
 	stageOrientationLock: StageOrientationLock;
 	setOrientation: (orientation: OrientationValue) => void;
 	setStageOrientationLock: (stageOrientationLock: StageOrientationLock) => void;
-	setRatio: (ratio: number) => void;
+	setRatio: Dispatch<SetStateAction<number>>;
 }
 
 export interface KidsModeContextProps {
@@ -39,6 +39,11 @@ export interface KidsModeContextProps {
 export interface AnchorLegConextProps {
 	anchorLeg: number;
 	setAnchorLeg: (anchorLeg: number) => void;
+}
+
+export interface TutorialContextProps {
+	tutorialStep: number;
+	setTutorialStep: (tutorial: number) => void;
 }
 
 const BenchContext = createContext<BlockContextProps>({
@@ -80,9 +85,14 @@ const KidsModeContext = createContext<KidsModeContextProps>({
 	setKidsMode: () => {},
 });
 
-const AnchorLegConext = createContext<AnchorLegConextProps>({
+const AnchorLegContext = createContext<AnchorLegConextProps>({
 	anchorLeg: NaN,
 	setAnchorLeg: () => {},
+});
+
+const TutorialContext = createContext<TutorialContextProps>({
+	tutorialStep: 1,
+	setTutorialStep: () => {},
 });
 
 export {
@@ -93,5 +103,6 @@ export {
 	ThemeContext,
 	OrientationContext,
 	KidsModeContext,
-	AnchorLegConext,
+	AnchorLegContext,
+	TutorialContext,
 };
