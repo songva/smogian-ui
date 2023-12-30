@@ -15,7 +15,7 @@ const rotateHalfCircle = (input: Pattern): Pattern => {
 const getRatio = (): number =>
 	isIPhone() ? window.outerWidth / window.outerHeight : window.innerWidth / window.innerHeight;
 
-const isIOSSafari = (): boolean => /iphone/i.test(window.navigator.userAgent);
+const isIOSSafari = (): boolean => /iphone/i.test(window.navigator.userAgent) && !isIOSChrome();
 
 const isIOSChrome = (): boolean => /crios/i.test(window.navigator.userAgent);
 

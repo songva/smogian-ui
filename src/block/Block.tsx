@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useRef, useState } from 'react';
 import { css } from 'aphrodite/no-important';
 import { Palettes, Pattern, PatternDirection, TransitionDuration } from '../common/interfaces';
 import useBlock from './useBlock';
@@ -48,7 +48,7 @@ const Block: FC<BlockProps> = props => {
 	const onClick = props.onClick || onDoubleTap;
 
 	return (
-		<div {...id} ref={dragRef} style={dndStyle} className={css(styles.block)} onWheel={onWheelScroll} onClick={onClick}>
+		<div {...id} ref={dragRef} style={dndStyle} className={css(styles.block)} onClick={onClick}>
 			<div style={rotateStyle} className={css(styles.backLayer)}>
 				<BackLayerClip colors={colors} backLayerStyle={backLayerStyle} direction={PatternDirection.TOP} />
 				<BackLayerClip colors={colors} backLayerStyle={backLayerStyle} direction={PatternDirection.BOTTOM} />

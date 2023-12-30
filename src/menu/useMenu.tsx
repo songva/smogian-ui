@@ -12,7 +12,7 @@ import {
 	ThemeContext,
 	ThemeContextProps,
 } from '../common/contexts';
-import { BumperAnimation, Ratio, StageOrientationLock } from '../common/interfaces';
+import { Ratio, StageOrientationLock } from '../common/interfaces';
 import seatService from '../seat/seatService';
 import { lightThemeStyle, darkThemeStyle } from '../app/App.style';
 
@@ -43,7 +43,7 @@ const generateDarkModeButtonStyle = (darkTheme: boolean): CSSProperties => ({
 const useMenu = () => {
 	const { palettes, darkTheme, setPalettes, setDarkTheme } = useContext<ThemeContextProps>(ThemeContext);
 	const { kidsMode, setKidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
-	const { blockList, setBlockList } = useContext<BlockContextProps>(StagedContext);
+	const { blockList } = useContext<BlockContextProps>(StagedContext);
 	const { setBumper } = useContext<BumperContextProps>(BumperContext);
 	const { ratio, stageOrientationLock, isLandscape, setStageOrientationLock } =
 		useContext<OrientationContextProps>(OrientationContext);
@@ -68,17 +68,15 @@ const useMenu = () => {
 
 	useEffect(() => {
 		if (menuLiftRef.current) {
-			menuLiftRef.current.ontouchmove = (e: TouchEvent) => onTouchMove(e.targetTouches[0].pageY);
-			menuLiftRef.current.ontouchend = onTouchEnd;
-			menuLiftRef.current.onmousedown = onMouseDown;
+			menuLiftRef.current.onpointerdown = onPointerDown;
 		}
 		if (overlayRef.current) {
 			overlayRef.current.onclick = hideMenu;
-			overlayRef.current.ontouchmove = hideMenu;
+			overlayRef.current.onpointerdown = hideMenu;
 		}
 	});
 
-	const onTouchMove = (currentY: number) => {
+	const onPointerMove: (event: { pageY: number }) => void = ({ pageY: currentY }) => {
 		setTransition('none');
 		setTimeout(() => {
 			previousClientY.current = currentY;
@@ -98,7 +96,7 @@ const useMenu = () => {
 		}
 	};
 
-	const onTouchEnd = () => {
+	const onPointerOut = () => {
 		setTransition('transform 300ms ease-out');
 		setTimeout(() => setTransition('none'), 290);
 
@@ -114,17 +112,15 @@ const useMenu = () => {
 		previousClientY.current = 0;
 	};
 
-	const onMouseDown = () => {
-		window.addEventListener('mousemove', onMouseMove);
-		window.addEventListener('mouseup', onMouseUp);
+	const onPointerDown = () => {
+		window.addEventListener('pointermove', onPointerMove);
+		window.addEventListener('pointerup', onPointerUp);
 	};
 
-	const onMouseMove = (e: MouseEvent) => onTouchMove(e.pageY);
-
-	const onMouseUp = () => {
-		onTouchEnd();
-		window.removeEventListener('mousemove', onMouseMove);
-		window.removeEventListener('mouseup', onMouseUp);
+	const onPointerUp = () => {
+		onPointerOut();
+		window.removeEventListener('pointermove', onPointerMove);
+		window.removeEventListener('pointerup', onPointerUp);
 	};
 
 	const hideMenu = () => {

@@ -46,7 +46,7 @@ const App: FC = () => {
 
 	return (
 		<>
-			<DndProvider backend={backend}>
+			<DndProvider backend={backend} options={{ enableMouseEvents: true }}>
 				<BenchContext.Provider value={{ blockList: benchBlockList, setBlockList: setBenchBlockList }}>
 					<StagedContext.Provider value={{ blockList: stagedBlockList, setBlockList: setStagedBlockList }}>
 						<ThemeContext.Provider value={{ palettes, darkTheme, setPalettes, setDarkTheme }}>
