@@ -75,6 +75,7 @@ export default StyleSheet.create({
 	commonOption: {
 		height: '100%',
 		aspectRatio: '1 / 1',
+		width: '100%',
 		'-webkit-tap-highlight-color': 'transparent',
 	},
 	shareLinkOption: {
@@ -219,6 +220,7 @@ export default StyleSheet.create({
 		justifySelf: 'center',
 		height: '0px',
 		'-webkit-tap-highlight-color': 'transparent',
+		touchAction: 'none',
 	},
 	liftPlaceholderLandscape: {
 		'@media (min-aspect-ratio: 1 )': {

@@ -1,4 +1,4 @@
-import { MouseEvent, WheelEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
@@ -54,7 +54,7 @@ interface UseBlockReturn {
 		animationName: string;
 		animationDuration: TransitionDuration;
 	};
-	onWheelScroll?: (event: WheelEvent<HTMLDivElement>) => void;
+	onWheelScroll?: (event: WheelEvent) => void;
 	onDoubleTap?: (event: any) => void;
 }
 
@@ -66,6 +66,7 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 	const { kidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
 	const { isLandscape, stageOrientationLock } = useContext<OrientationContextProps>(OrientationContext);
 	const { anchorLeg } = useContext<AnchorLegConextProps>(AnchorLegContext);
+	const scrollRef = useRef<HTMLDivElement>();
 
 	const [rotate, setRotate] = useState<number>(0);
 	const [transitionDuration, setTransitionDuration] = useState<TransitionDuration>(TransitionDuration.STATIC);
@@ -180,11 +181,15 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 		rotateBlock(90);
 	});
 
-	const onWheelScroll = (event: WheelEvent<HTMLDivElement>) => onThrottleWheelScroll(event.deltaY, rotateBlock);
+	const onWheelScroll = (event: WheelEvent) => onThrottleWheelScroll(event.deltaY, rotateBlock);
 
-	dragPreview(getEmptyImage(), { captureDraggingState: true });
 	useEffect(() => {
 		dragPreview(getEmptyImage(), { captureDraggingState: true });
+		if (scrollRef.current) {
+			scrollRef.current.onwheel = (e: WheelEvent) => {
+				onWheelScroll(e);
+			};
+		}
 	});
 
 	useEffect(() => {
@@ -212,7 +217,6 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 			},
 		};
 	}
-	// const colors = pattern.map(color => palettesMap[contextPalettes][color]);
 	const id =
 		isEqual(pattern, [0, 0, 1, 2]) ||
 		isEqual(pattern, [0, 1, 2, 0]) ||
@@ -228,7 +232,7 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 	return {
 		id,
 		colors,
-		dragRef,
+		dragRef: dragRef(scrollRef),
 		dndStyle: {
 			opacity,
 			zIndex,
