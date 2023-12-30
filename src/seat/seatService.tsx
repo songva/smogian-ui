@@ -7,14 +7,15 @@ import {
 	StageOrientationLock,
 } from '../common/interfaces';
 import { BlockProps } from '../block/Block';
+import { GridDimension } from '../common/useOrientation';
 
-interface AllocatedSeat {
+export interface AllocatedSeatReturn {
 	row: number;
 	column: number;
 	direction?: PatternDirection[];
 }
 
-export type updateBumperProps = {
+export type UpdateBumperProps = {
 	seatNumber: number;
 	isTargetingStage: boolean;
 	isSourceFromStage: boolean;
@@ -25,7 +26,7 @@ export type updateBumperProps = {
 	isLandscape: boolean;
 };
 
-export type validateMoveProps = {
+export type ValidateMoveProps = {
 	kidsMode: boolean;
 	stageOrientationLock: StageOrientationLock;
 	isLandscape: boolean;
@@ -35,7 +36,7 @@ export type validateMoveProps = {
 	bumperColor: number | undefined;
 };
 
-export interface updateSeatProps {
+export interface UpdateSeatProps {
 	kidsMode: boolean;
 	item: BlockProps;
 	seat: { seatNumber: number; isStage: boolean };
@@ -46,24 +47,28 @@ export interface updateSeatProps {
 	isLandscape: boolean;
 }
 
-export interface updateSeatReturn {
+export interface UpdateSeatReturn {
 	updatedBumper: BumperColorAndCoordinates | undefined;
 	updatedStagedBlockList: BlockList;
 	updatedBenchBlockList: BlockList;
 }
 
-export interface seatServiceReturn {
-	updateBumper: (param: updateBumperProps) => BumperColorAndCoordinates | undefined;
-	validateMove: (params: validateMoveProps) => boolean;
-	updateSeat: (params: updateSeatProps) => updateSeatReturn | undefined;
+export interface GetDimensionProps {
+	stageOrientationLock: StageOrientationLock;
+	isLandscape: boolean;
 }
 
-const seatService: () => seatServiceReturn = () => {
-	const getDimension: (params: { stageOrientationLock: StageOrientationLock; isLandscape: boolean }) => {
-		width: number;
-		height: number;
-	} = ({ stageOrientationLock, isLandscape }) => {
-		const width =
+export interface SeatServiceReturn {
+	updateBumper: (param: UpdateBumperProps) => BumperColorAndCoordinates | undefined;
+	validateMove: (params: ValidateMoveProps) => boolean;
+	updateSeat: (params: UpdateSeatProps) => UpdateSeatReturn | undefined;
+	getDimension: (params: GetDimensionProps) => GridDimension;
+	allocateSeat: (params: { seatNumber: number; columnSpan: number }) => AllocatedSeatReturn | undefined;
+}
+
+const seatService: () => SeatServiceReturn = () => {
+	const getDimension: (params: GetDimensionProps) => GridDimension = ({ stageOrientationLock, isLandscape }) => {
+		const columnSpan =
 			stageOrientationLock === StageOrientationLock.LANDSCAPE
 				? 6
 				: stageOrientationLock === StageOrientationLock.PORTRAIT
@@ -71,45 +76,49 @@ const seatService: () => seatServiceReturn = () => {
 				: isLandscape
 				? 4
 				: 6;
-		const height = 10 - width;
-		return { width, height };
+		const rowSpan = 10 - columnSpan;
+		return { columnSpan, rowSpan };
 	};
 
-	const allocateSeat = (seatNumber: number, width: number): AllocatedSeat | undefined => {
+	const allocateSeat: (params: { seatNumber: number; columnSpan: number }) => AllocatedSeatReturn | undefined = ({
+		seatNumber,
+		columnSpan,
+	}) => {
 		if (seatNumber < 0 || seatNumber > 23) {
 			return;
 		}
 		const coordinations = {
-			row: Math.floor(seatNumber / width) + 1,
-			column: (seatNumber % width) + 1,
+			row: Math.floor(seatNumber / columnSpan) + 1,
+			column: (seatNumber % columnSpan) + 1,
 		};
 		switch (true) {
 			case seatNumber === 0:
 				return { ...coordinations, direction: [PatternDirection.TOP, PatternDirection.LEFT] };
-			case seatNumber === width - 1:
+			case seatNumber === columnSpan - 1:
 				return { ...coordinations, direction: [PatternDirection.TOP, PatternDirection.RIGHT] };
-			case seatNumber === 23 - width + 1:
+			case seatNumber === 23 - columnSpan + 1:
 				return { ...coordinations, direction: [PatternDirection.BOTTOM, PatternDirection.LEFT] };
 			case seatNumber === 23:
 				return { ...coordinations, direction: [PatternDirection.BOTTOM, PatternDirection.RIGHT] };
-			case seatNumber < width:
+			case seatNumber < columnSpan:
 				return { ...coordinations, direction: [PatternDirection.TOP] };
-			case seatNumber % width === width - 1:
+			case seatNumber % columnSpan === columnSpan - 1:
 				return { ...coordinations, direction: [PatternDirection.RIGHT] };
-			case seatNumber > 23 - width:
+			case seatNumber > 23 - columnSpan:
 				return { ...coordinations, direction: [PatternDirection.BOTTOM] };
-			case seatNumber % width === 0:
+			case seatNumber % columnSpan === 0:
 				return { ...coordinations, direction: [PatternDirection.LEFT] };
 			default:
 				return coordinations;
 		}
 	};
 
-	const countTakenBumperSeats: (blockList: BlockList, width: number) => number = (blockList, width) =>
-		blockList.map((item, index) => item && allocateSeat(index, width)?.direction).filter(item => item !== undefined)
-			.length;
+	const countTakenBumperSeats: (blockList: BlockList, columnSpan: number) => number = (blockList, columnSpan) =>
+		blockList
+			.map((item, seatNumber) => item && allocateSeat({ seatNumber, columnSpan })?.direction)
+			.filter(item => item !== undefined).length;
 
-	const updateBumper: (param: updateBumperProps) => BumperColorAndCoordinates | undefined = ({
+	const updateBumper: (param: UpdateBumperProps) => BumperColorAndCoordinates | undefined = ({
 		seatNumber,
 		isTargetingStage,
 		isSourceFromStage,
@@ -119,14 +128,14 @@ const seatService: () => seatServiceReturn = () => {
 		stageOrientationLock,
 		isLandscape,
 	}) => {
-		const { width, height } = getDimension({ isLandscape, stageOrientationLock });
-		const position = allocateSeat(seatNumber, width);
-		const xPercent = 100 / (width + 1);
-		const yPercent = 100 / (height + 1);
+		const { columnSpan, rowSpan } = getDimension({ isLandscape, stageOrientationLock });
+		const position = allocateSeat({ seatNumber, columnSpan });
+		const xPercent = 100 / (columnSpan + 1);
+		const yPercent = 100 / (rowSpan + 1);
 		if (
 			isTargetingStage &&
 			position?.direction !== undefined &&
-			countTakenBumperSeats(updatedStagedBlockList, width) === 1
+			countTakenBumperSeats(updatedStagedBlockList, columnSpan) === 1
 		) {
 			return {
 				x: position.column * xPercent,
@@ -136,17 +145,17 @@ const seatService: () => seatServiceReturn = () => {
 			};
 		} else if (
 			isSourceFromStage &&
-			countTakenBumperSeats(stagedBlockList, width) !== 0 &&
-			countTakenBumperSeats(updatedStagedBlockList, width) === 0
+			countTakenBumperSeats(stagedBlockList, columnSpan) !== 0 &&
+			countTakenBumperSeats(updatedStagedBlockList, columnSpan) === 0
 		) {
 			const adjustedPosition =
 				!isTargetingStage &&
 				((isLandscape && stageOrientationLock === StageOrientationLock.LANDSCAPE) ||
 					(!isLandscape && stageOrientationLock === StageOrientationLock.PORTRAIT))
-					? allocateSeat(
+					? allocateSeat({
 							seatNumber,
-							getDimension({ isLandscape, stageOrientationLock: StageOrientationLock.UNLOCKED }).width
-					  )
+							columnSpan: getDimension({ isLandscape, stageOrientationLock: StageOrientationLock.UNLOCKED }).columnSpan,
+					  })
 					: position;
 
 			return {
@@ -158,7 +167,7 @@ const seatService: () => seatServiceReturn = () => {
 		}
 	};
 
-	const validateMove: (params: validateMoveProps) => boolean = ({
+	const validateMove: (params: ValidateMoveProps) => boolean = ({
 		kidsMode,
 		stageOrientationLock,
 		isLandscape,
@@ -167,23 +176,27 @@ const seatService: () => seatServiceReturn = () => {
 		movedPattern,
 		bumperColor: currentBumperColor,
 	}) => {
-		const { width } = getDimension({ isLandscape, stageOrientationLock });
+		const { columnSpan } = getDimension({ isLandscape, stageOrientationLock });
 		const bumperColor = kidsMode
 			? undefined
-			: countTakenBumperSeats(stagedBlockList, width) === 1
+			: countTakenBumperSeats(stagedBlockList, columnSpan) === 1
 			? undefined
 			: currentBumperColor;
 
 		const topAdjacentColor =
-			seatNumber < width ? bumperColor : (stagedBlockList[seatNumber - width] || [])[PatternDirection.BOTTOM];
+			seatNumber < columnSpan ? bumperColor : (stagedBlockList[seatNumber - columnSpan] || [])[PatternDirection.BOTTOM];
 		const bottomAdjacentColor =
-			seatNumber > 23 - width ? bumperColor : (stagedBlockList[seatNumber + width] || [])[PatternDirection.TOP];
+			seatNumber > 23 - columnSpan
+				? bumperColor
+				: (stagedBlockList[seatNumber + columnSpan] || [])[PatternDirection.TOP];
 		const leftAdjacentColor =
-			seatNumber % width === 0 ? bumperColor : (stagedBlockList[seatNumber - 1] || [])[PatternDirection.RIGHT];
+			seatNumber % columnSpan === 0 ? bumperColor : (stagedBlockList[seatNumber - 1] || [])[PatternDirection.RIGHT];
 		const rightAdjacentColor =
-			seatNumber % width === width - 1 ? bumperColor : (stagedBlockList[seatNumber + 1] || [])[PatternDirection.LEFT];
+			seatNumber % columnSpan === columnSpan - 1
+				? bumperColor
+				: (stagedBlockList[seatNumber + 1] || [])[PatternDirection.LEFT];
 
-		const direcions = allocateSeat(seatNumber, width)?.direction || [];
+		const direcions = allocateSeat({ seatNumber, columnSpan })?.direction || [];
 		if (!kidsMode && direcions.length === 2 && movedPattern[direcions[0]] !== movedPattern[direcions[1]]) {
 			return false;
 		}
@@ -200,7 +213,7 @@ const seatService: () => seatServiceReturn = () => {
 		);
 	};
 
-	const updateSeat: (props: updateSeatProps) => updateSeatReturn | undefined = ({
+	const updateSeat: (props: UpdateSeatProps) => UpdateSeatReturn | undefined = ({
 		kidsMode,
 		stageOrientationLock,
 		isLandscape,
@@ -215,17 +228,17 @@ const seatService: () => seatServiceReturn = () => {
 		const sourceBlockList = isSourceFromStage ? stagedBlockList : benchBlockList;
 		const targetBlockList = isTargetingStage ? stagedBlockList : benchBlockList;
 
-		const movedPattern = sourceBlockList[item.index];
+		const movedPattern = sourceBlockList[item.seatNumber];
 		if (movedPattern === undefined || targetBlockList[seat.seatNumber] !== undefined || item === undefined) {
 			return;
 		}
 
 		const onGoingStagedBlockList = isSourceFromStage
-			? [...stagedBlockList].map((block, index) => (item.index === index ? undefined : block))
+			? [...stagedBlockList].map((block, index) => (item.seatNumber === index ? undefined : block))
 			: stagedBlockList;
 		const onGoingBenchBlockList = isSourceFromStage
 			? benchBlockList
-			: [...benchBlockList].map((block, index) => (item.index === index ? undefined : block));
+			: [...benchBlockList].map((block, index) => (item.seatNumber === index ? undefined : block));
 
 		const updatedStagedBlockList = isTargetingStage
 			? [...onGoingStagedBlockList].map((block, index) => (seat.seatNumber === index ? movedPattern : block))
@@ -272,6 +285,8 @@ const seatService: () => seatServiceReturn = () => {
 		updateBumper,
 		validateMove,
 		updateSeat,
+		getDimension,
+		allocateSeat,
 	};
 };
 

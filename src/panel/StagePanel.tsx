@@ -1,11 +1,11 @@
 import { CSSProperties, FC, memo } from 'react';
-import { StyleSheet, css } from 'aphrodite/no-important';
+import { css } from 'aphrodite/no-important';
 import { ThrottleContext } from '../common/contexts';
-import usePanel from './usePanel';
-import Seat from '../seat/Seat';
-import './Panel.css';
 import { StageOrientationLock } from '../common/interfaces';
 import { darkBumperColor, ligthBumperColor, palettesMap } from '../common/constants';
+import usePanel from './usePanel';
+import Seat from '../seat/Seat';
+import styles from './Panel.style';
 
 const bumperStyle: CSSProperties = {
 	position: 'relative',
@@ -22,23 +22,6 @@ const darkBumperStyle: CSSProperties = {
 	filter: 'brightness(0.8)',
 };
 
-const panelStyle: CSSProperties = {
-	justifyContent: 'center',
-	display: 'grid',
-	gridGap: '0.2dvmin',
-	backgroundColor: 'white',
-	position: 'relative',
-	zIndex: 3,
-	border: '0.3dvmin solid white',
-	borderRadius: '0.8vmin',
-	boxShadow: '-0.1vmin 0.1vmin 0vmin 0.4vmin #00000030',
-};
-const darkPanelStyle: CSSProperties = {
-	backgroundColor: '#282828',
-	border: '0.4dvmin solid #282828',
-	filter: 'brightness(1.25)',
-};
-
 const stageLandscapeOverrideStyle: CSSProperties = {
 	gridTemplateColumns: 'repeat(6, 1fr)',
 };
@@ -46,41 +29,10 @@ const stagePortraitOverrideStyle: CSSProperties = {
 	gridTemplateColumns: 'repeat(4, 1fr)',
 };
 
-const styles = StyleSheet.create({
-	portraitPanel: {
-		'@media (max-aspect-ratio: 1)': {
-			gridRow: 2,
-			justifySelf: 'center',
-		},
-	},
-	landscapePanel: {
-		'@media (min-aspect-ratio: 1)': {
-			gridColumn: 2,
-			justifySelf: 'left',
-		},
-	},
-	exLandscapePanel: {
-		'@media (min-aspect-ratio: 2)': {
-			justifySelf: 'center',
-		},
-	},
-	portraitGrid: {
-		'@media (max-aspect-ratio: 1)': {
-			gridTemplateColumns: 'repeat(6, 1fr)',
-		},
-	},
-	landscapeGrid: {
-		'@media (min-aspect-ratio: 1)': {
-			gridTemplateColumns: 'repeat(4, 1fr)',
-		},
-	},
-});
-
 const StagePanel: FC = () => {
-	const { blockList, onWheelScroll, bumper, palettes, isLandscape, stageOrientationLock, darkTheme, dummyDrop } =
-		usePanel({
-			isStage: true,
-		});
+	const { blockList, onWheelScroll, bumper, palettes, stageOrientationLock, darkTheme, dummyDrop } = usePanel({
+		isStage: true,
+	});
 	const bumperColor = darkTheme ? darkBumperColor : ligthBumperColor;
 	const animationDuration = (bumper.x || 0) > 100 || (bumper.y || 0) > 100 ? '900ms' : '400ms';
 	const animationStyle: CSSProperties = {
@@ -105,11 +57,16 @@ const StagePanel: FC = () => {
 		<section
 			ref={dummyDrop}
 			style={{ ...bumperStyle, ...animationStyle, ...(darkTheme && darkBumperStyle) }}
-			className={css(styles.landscapePanel, styles.portraitPanel, styles.exLandscapePanel)}
+			className={css(styles.bumperLandscape, styles.bumperPortrait, styles.bumperExLandscape)}
 		>
 			<div
-				style={{ ...panelStyle, ...stageLockStyle, ...(darkTheme && darkPanelStyle) }}
-				className={css(styles.landscapeGrid, styles.portraitGrid)}
+				style={stageLockStyle}
+				className={css(
+					styles.stagePanel,
+					styles.stagePanelPortrait,
+					styles.stagePanelLandscape,
+					darkTheme && styles.stagePanelDark
+				)}
 			>
 				<ThrottleContext.Provider value={onWheelScroll}>
 					{blockList.map((item, index) => (

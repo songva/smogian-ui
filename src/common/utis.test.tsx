@@ -2,10 +2,6 @@ import { rotateClockwise, rotateAntiClockwise } from './utils';
 import { Pattern } from './interfaces';
 
 describe('rotateClockwise', () => {
-	test('rotate undefined clockwise should return undefined', () => {
-		expect(rotateClockwise(undefined)).toBe(undefined);
-	});
-
 	test('rotate an 4 elements array clockwise should return a new array rotated clockwise', () => {
 		const array = [1, 2, 3, 4] as Pattern;
 		expect(array).toEqual([1, 2, 3, 4]);
@@ -14,10 +10,6 @@ describe('rotateClockwise', () => {
 });
 
 describe('rotateAntiClockwise', () => {
-	test('rotate undefined anti-clockwise should return undefined', () => {
-		expect(rotateAntiClockwise(undefined)).toBe(undefined);
-	});
-
 	test('rotate an 4 elements array clockwise should return a new array rotated clockwise', () => {
 		const array = [1, 2, 3, 4] as Pattern;
 		expect(rotateAntiClockwise(array)).toEqual([2, 3, 4, 1]);

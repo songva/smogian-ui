@@ -7,7 +7,7 @@ import useMenu, { PresetTop } from './useMenu';
 import useSvg from './useSvg';
 import styles from './Menu.style';
 
-const samplePattern: Pattern = [0, 0, 1, 2];
+const samplePattern: Pattern = [1, 2, 0, 0];
 
 const Menu: FC = () => {
 	const {
@@ -63,19 +63,15 @@ const Menu: FC = () => {
 				)}
 			>
 				<div key="menu-palettes" data-testid="menu-palettes" className={css(styles.palettes, styles.palettesPortrait)}>
-					{Object.entries(palettesMap).map(([samplePalettesName, samplePalettes]) => (
+					{Object.entries(palettesMap).map(([samplePalettesName]) => (
 						<div
-							style={{
-								width: '100%',
-								height: '100%',
-								aspectRatio: '1 / 1',
-								opacity: palettes !== samplePalettesName ? 0.4 : 0.8,
-							}}
+							className={css(styles.paletteButton)}
+							style={{ opacity: palettes !== samplePalettesName ? 0.4 : 0.8 }}
 							key={`switch-button-${samplePalettesName}`}
 						>
 							<Block
-								index={-1}
-								isStage={false}
+								seatNumber={-1}
+								isStage
 								pattern={samplePattern}
 								palettes={palettesMap[samplePalettesName]}
 								onClick={() => setPalettes(samplePalettesName)}
@@ -135,7 +131,11 @@ const Menu: FC = () => {
 						</div>
 					</div>
 				</div>
-				<div key="menu-shares" data-testid="menu-shares" className={css(styles.quadSettingRow)}>
+				<div
+					key="menu-shares"
+					data-testid="menu-shares"
+					className={css(styles.quadSettingRow, styles.quadSettingRowExLandscape)}
+				>
 					<div />
 					{facebook(() =>
 						window.open('https://www.facebook.com/sharer.php?u=https://www.smogian.com&quote=MacMahon Squares Online')

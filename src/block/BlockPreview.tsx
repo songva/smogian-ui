@@ -1,20 +1,16 @@
-import { CSSProperties, FC } from 'react';
+import { FC } from 'react';
 import { usePreview } from 'react-dnd-preview';
+import { css } from 'aphrodite/no-important';
 import Block, { BlockProps } from './Block';
-
-const previewStyle: CSSProperties = {
-	height: '11dvmin',
-	aspectRatio: '1 / 1',
-	zIndex: 3,
-};
+import styles from './Block.style';
 
 const BlockPreview: FC = () => {
 	const preview = usePreview();
 	if (preview.display && preview.monitor.getItem()) {
-		const { index, isStage, pattern } = preview.monitor.getItem<BlockProps>();
+		const { seatNumber, isStage, pattern } = preview.monitor.getItem<BlockProps>();
 		return (
-			<div style={{ ...previewStyle, ...preview.style }}>
-				<Block index={index} isStage={isStage} pattern={pattern} />
+			<div style={preview.style} className={css(styles.preview, styles.previewExLandscape, styles.previewPortrait)}>
+				<Block seatNumber={seatNumber} isStage={isStage} pattern={pattern} />
 			</div>
 		);
 	}

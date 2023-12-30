@@ -14,6 +14,7 @@ export interface PalettesMap {
 export enum TransitionDuration {
 	STATIC = '0ms',
 	ANIMATE = '300ms',
+	VICTORY = '3000ms',
 }
 export enum Opacity {
 	INVISABLE = 0,
@@ -45,10 +46,23 @@ export enum PatternDirection {
 	BOTTOM = 3,
 }
 
+export enum PatternOrientation {
+	TOP_LEFT = 'tl',
+	TOP_RIGHT = 'tr',
+	BOTTOM_LEFT = 'bl',
+	BOTTOM_RIGHT = 'br',
+}
+
 export enum BumperAnimation {
 	EMPTY = '',
 	PAINT = 'paintKeyframes',
 	FADE = 'fadeKeyframes',
+}
+
+export enum BlockAnimation {
+	EMPTY = '',
+	CLOCKWISE = 'clockwiseKeyframes',
+	ANTICLOCKWISE = 'antiClockwiseKeyframes',
 }
 
 export enum StageOrientationLock {

@@ -1,5 +1,5 @@
-import { createContext } from 'react';
-import { BlockList, BumperColorAndCoordinates, Palettes, Ratio, StageOrientationLock } from './interfaces';
+import { Dispatch, SetStateAction, createContext } from 'react';
+import { BlockList, BumperColorAndCoordinates, StageOrientationLock } from './interfaces';
 import { OrientationValue } from './useOrientation';
 
 export interface BlockContextProps {
@@ -28,12 +28,22 @@ export interface OrientationContextProps {
 	stageOrientationLock: StageOrientationLock;
 	setOrientation: (orientation: OrientationValue) => void;
 	setStageOrientationLock: (stageOrientationLock: StageOrientationLock) => void;
-	setRatio: (ratio: number) => void;
+	setRatio: Dispatch<SetStateAction<number>>;
 }
 
 export interface KidsModeContextProps {
 	kidsMode: boolean;
 	setKidsMode: (kidsMode: boolean) => void;
+}
+
+export interface AnchorLegConextProps {
+	anchorLeg: number;
+	setAnchorLeg: (anchorLeg: number) => void;
+}
+
+export interface TutorialContextProps {
+	tutorialStep: number;
+	setTutorialStep: (tutorial: number) => void;
 }
 
 const BenchContext = createContext<BlockContextProps>({
@@ -75,6 +85,16 @@ const KidsModeContext = createContext<KidsModeContextProps>({
 	setKidsMode: () => {},
 });
 
+const AnchorLegContext = createContext<AnchorLegConextProps>({
+	anchorLeg: NaN,
+	setAnchorLeg: () => {},
+});
+
+const TutorialContext = createContext<TutorialContextProps>({
+	tutorialStep: 1,
+	setTutorialStep: () => {},
+});
+
 export {
 	StagedContext,
 	BenchContext,
@@ -83,4 +103,6 @@ export {
 	ThemeContext,
 	OrientationContext,
 	KidsModeContext,
+	AnchorLegContext,
+	TutorialContext,
 };

@@ -32,7 +32,6 @@ export default StyleSheet.create({
 		boxSizing: 'border-box',
 		alignItems: 'center',
 		padding: '4dvmin 3dvmin 0',
-		border: '1px solid #c0c0c0',
 		backgroundColor: 'white',
 		boxShadow: '#77777780 0px 0px 3px 2px',
 		gap: '2.5dvmin',
@@ -58,7 +57,7 @@ export default StyleSheet.create({
 			width: '100%',
 			border: 'none',
 			margin: 0,
-			height: '100%',
+			height: '105%',
 			boxShadow: 'none',
 			gap: '3dvmin',
 		},
@@ -69,22 +68,28 @@ export default StyleSheet.create({
 		},
 	},
 	panelDark: {
-		border: '1px solid #424242',
-		backgroundColor: '#3c3c3c',
+		backgroundColor: '#282828',
 		boxShadow: '#00000060 0px 0px 3px 2px',
 	},
 
 	commonOption: {
 		height: '100%',
-		width: '100%',
+		aspectRatio: '1 / 1',
 		'-webkit-tap-highlight-color': 'transparent',
 	},
 	shareLinkOption: {
 		height: '100%',
-		width: '100%',
+		aspectRatio: '1 / 1',
+		maxHeight: '40px',
+		maxWidth: '6dvh',
+		minHeight: '30px',
+		minWidth: '30px',
+		opacity: 0.8,
+		cursor: 'pointer',
 		'-webkit-tap-highlight-color': 'transparent',
-		maxWidth: '6dvmin',
-		maxHeight: '6dvmin',
+	},
+	shareLinkOptionDark: {
+		fill: '#929090',
 	},
 	commonButton: {
 		display: 'flex',
@@ -99,7 +104,7 @@ export default StyleSheet.create({
 		transitionProperty: 'left',
 	},
 	commonButtonDark: {
-		backgroundColor: '#3c3c3c',
+		backgroundColor: '#282828',
 		border: '0.8px solid #00000080',
 		boxShadow: '#00000080 -1px 1px 2px',
 	},
@@ -123,7 +128,6 @@ export default StyleSheet.create({
 	commonLinerExPortrait: {
 		'@media (max-aspect-ratio: 2 / 3)': {
 			height: '4.5dvmax',
-			// borderRadius: '1.5dvmin',
 		},
 	},
 	commonLinerDark: {
@@ -165,7 +169,7 @@ export default StyleSheet.create({
 		},
 	},
 	commonMaskDark: {
-		borderColor: '#3c3c3c',
+		borderColor: '#282828',
 	},
 
 	biSettingRow: {
@@ -181,6 +185,12 @@ export default StyleSheet.create({
 		alignSelf: 'flex-end',
 		minHeight: '10dvh',
 		alignContent: 'flex-end',
+		justifyItems: 'center',
+	},
+	quadSettingRowExLandscape: {
+		'@media (min-aspect-ratio: 2 / 1)': {
+			marginBottom: '5dvh',
+		},
 	},
 	commonTriButtons: {
 		width: '33.3%',
@@ -188,6 +198,14 @@ export default StyleSheet.create({
 	commonDuoButtons: {
 		transitionDuration: '300ms',
 		width: '50%',
+	},
+	paletteButton: {
+		width: '100%',
+		height: '100%',
+		aspectRatio: '1 / 1',
+		position: 'relative',
+		cursor: 'pointer',
+		'-webkit-tap-highlight-color': 'transparent',
 	},
 
 	orientation: {
@@ -225,7 +243,7 @@ export default StyleSheet.create({
 	},
 
 	liftDark: {
-		backgroundColor: '#3c3c3c',
+		backgroundColor: '#464646',
 		boxShadow: '#00000060 0px 1px 2px 1px',
 	},
 

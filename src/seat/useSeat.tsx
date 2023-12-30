@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 import {
+	AnchorLegContext,
+	AnchorLegConextProps,
 	BenchContext,
 	BlockContextProps,
 	BumperContext,
@@ -10,12 +12,11 @@ import {
 	OrientationContext,
 	OrientationContextProps,
 	StagedContext,
-	ThemeContext,
-	ThemeContextProps,
 } from '../common/contexts';
 import { macMahon } from '../common/constants';
 import seatService from './seatService';
 import { BlockProps } from '../block/Block';
+import { PatternOrientation } from '../common/interfaces';
 
 interface useSeatProps {
 	seatNumber: number;
@@ -23,8 +24,8 @@ interface useSeatProps {
 }
 
 type useSeatReturn = {
+	id?: { id: string };
 	dropRef: ConnectDropTarget;
-	darkTheme: boolean;
 };
 
 const useSeat: (props: useSeatProps) => useSeatReturn = ({ seatNumber, isStage }) => {
@@ -33,18 +34,21 @@ const useSeat: (props: useSeatProps) => useSeatReturn = ({ seatNumber, isStage }
 	const { bumper, setBumper } = useContext<BumperContextProps>(BumperContext);
 	const { kidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
 	const { isLandscape, stageOrientationLock } = useContext<OrientationContextProps>(OrientationContext);
-	const { darkTheme } = useContext<ThemeContextProps>(ThemeContext);
-	const { updateSeat } = seatService;
+	const { setAnchorLeg } = useContext<AnchorLegConextProps>(AnchorLegContext);
+	const { updateSeat, getDimension } = seatService;
 
 	const [, dropRef] = useDrop(
 		() => ({
 			accept: macMahon,
 			drop: (item: BlockProps) => {
-				console.warn(
-					`from ${item.isStage ? 'stage' : 'unstage'}, @ ${item.index}, to ${
+				/**
+				 keep it as needed for redo or moves counting 
+				 console.warn(
+					`from ${item.isStage ? 'stage' : 'unstage'}, @ ${item.seatNumber}, to ${
 						isStage ? 'stage' : 'unstage'
 					} @ ${seatNumber}`
-				);
+				); 
+				*/
 				const updatedSeat = updateSeat({
 					item,
 					kidsMode,
@@ -60,12 +64,31 @@ const useSeat: (props: useSeatProps) => useSeatReturn = ({ seatNumber, isStage }
 					updatedBumper && setBumper(updatedBumper);
 					updatedBenchBlockList && setBenchBlockList(updatedBenchBlockList);
 					updatedStagedBlockList && setStagedBlockList(updatedStagedBlockList);
+					if (updatedStagedBlockList.filter(stagedBlock => stagedBlock).length === 24) {
+						setAnchorLeg(seatNumber);
+					} else {
+						setAnchorLeg(NaN);
+					}
 				}
 			},
 		}),
 		[isStage, seatNumber, stagedBlockList, benchBlockList, bumper]
 	);
-	return { dropRef, darkTheme };
+
+	const stageWidth = getDimension({ isLandscape, stageOrientationLock }).columnSpan;
+	const seatOrientation = isStage
+		? seatNumber === 0
+			? PatternOrientation.TOP_LEFT
+			: seatNumber === stageWidth - 1
+			? PatternOrientation.TOP_RIGHT
+			: seatNumber === 24 - stageWidth
+			? PatternOrientation.BOTTOM_LEFT
+			: seatNumber === 23
+			? PatternOrientation.BOTTOM_RIGHT
+			: undefined
+		: undefined;
+	const id = seatOrientation && { id: `seat-${seatOrientation}` };
+	return { id, dropRef };
 };
 
 export default useSeat;
