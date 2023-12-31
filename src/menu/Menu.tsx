@@ -74,7 +74,7 @@ const Menu: FC = () => {
 								isStage
 								pattern={samplePattern}
 								palettes={palettesMap[samplePalettesName]}
-								onClick={() => setPalettes(samplePalettesName)}
+								onClickOverride={() => setPalettes(samplePalettesName)}
 							/>
 						</div>
 					))}

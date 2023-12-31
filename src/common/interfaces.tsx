@@ -78,3 +78,8 @@ export enum Ratio {
 	SEMI_LANDSCAPE = 1.5,
 	LANDSCAPE = 2,
 }
+
+export enum BumperAnimationDuration {
+	NORMAL = 400,
+	FADE = 900,
+}

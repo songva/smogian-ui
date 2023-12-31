@@ -1,5 +1,6 @@
 export const appStyle = {
 	height: '100dvh',
+	touchAction: 'none',
 };
 
 export const lightThemeStyle = {

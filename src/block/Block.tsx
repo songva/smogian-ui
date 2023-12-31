@@ -11,7 +11,7 @@ export interface BlockProps {
 	isStage: boolean;
 	overrideStyles?: string[];
 	palettes?: Palettes;
-	onClick?: () => void;
+	onClickOverride?: () => void;
 }
 interface ClipProps {
 	direction: PatternDirection;
@@ -44,11 +44,10 @@ const BackLayerClip: FC<ClipProps> = ({ direction, colors, backLayerStyle }) => 
 );
 
 const Block: FC<BlockProps> = props => {
-	const { id, colors, dragRef, rotateStyle, dndStyle, backLayerStyle, onDoubleTap, onWheelScroll } = useBlock(props);
-	const onClick = props.onClick || onDoubleTap;
+	const { id, colors, dragRef, rotateStyle, dndStyle, backLayerStyle } = useBlock(props);
 
 	return (
-		<div {...id} ref={dragRef} style={dndStyle} className={css(styles.block)} onClick={onClick}>
+		<div {...id} ref={dragRef} style={dndStyle} className={css(styles.block)}>
 			<div style={rotateStyle} className={css(styles.backLayer)}>
 				<BackLayerClip colors={colors} backLayerStyle={backLayerStyle} direction={PatternDirection.TOP} />
 				<BackLayerClip colors={colors} backLayerStyle={backLayerStyle} direction={PatternDirection.BOTTOM} />

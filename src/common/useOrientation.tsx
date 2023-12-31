@@ -152,6 +152,42 @@ const useOrientation = () => {
 		});
 		setStagedBlockList(rotatedStagedBlockList);
 	}, [stageOrientationLock]);
+
+	useEffect(() => {
+		if (window.outerHeight > window.screen.height) {
+			function sendTouchEvent(x: number, y: number, element: HTMLElement, eventType: string) {
+				const touchObj = new Touch({
+					identifier: Date.now(),
+					target: element,
+					clientX: x,
+					clientY: y,
+					radiusX: 2.5,
+					radiusY: 2.5,
+					rotationAngle: 10,
+					force: 0.5,
+				});
+
+				const touchEvent = new TouchEvent(eventType, {
+					cancelable: true,
+					bubbles: true,
+					touches: [touchObj],
+					targetTouches: [],
+					changedTouches: [touchObj],
+					shiftKey: true,
+				});
+
+				element.dispatchEvent(touchEvent);
+			}
+
+			const myElement = document.getElementsByTagName('body')[0];
+
+			if (myElement) {
+				sendTouchEvent(150, 150, myElement, 'touchstart');
+				sendTouchEvent(220, 200, myElement, 'touchmove');
+				sendTouchEvent(220, 200, myElement, 'touchend');
+			}
+		}
+	});
 };
 
 export default useOrientation;

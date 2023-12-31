@@ -4,19 +4,19 @@ import { OrientationValue } from './useOrientation';
 
 export interface BlockContextProps {
 	blockList: BlockList;
-	setBlockList: (block: BlockList) => void;
+	setBlockList: Dispatch<SetStateAction<BlockList>>;
 }
 
 export interface BumperContextProps {
 	bumper: BumperColorAndCoordinates;
-	setBumper: (bumper: BumperColorAndCoordinates) => void;
+	setBumper: Dispatch<SetStateAction<BumperColorAndCoordinates>>;
 }
 
 export interface ThemeContextProps {
 	darkTheme: boolean;
 	palettes: string;
-	setDarkTheme: (darkTheme: boolean) => void;
-	setPalettes: (palettes: string) => void;
+	setDarkTheme: Dispatch<SetStateAction<boolean>>;
+	setPalettes: Dispatch<SetStateAction<string>>;
 }
 
 export type ThrottleContextProps = (deltaY: number, func: (deltaY: number) => void) => void;
@@ -26,24 +26,24 @@ export interface OrientationContextProps {
 	isLandscape: boolean;
 	ratio: number;
 	stageOrientationLock: StageOrientationLock;
-	setOrientation: (orientation: OrientationValue) => void;
-	setStageOrientationLock: (stageOrientationLock: StageOrientationLock) => void;
+	setOrientation: Dispatch<SetStateAction<OrientationValue>>;
+	setStageOrientationLock: Dispatch<SetStateAction<StageOrientationLock>>;
 	setRatio: Dispatch<SetStateAction<number>>;
 }
 
 export interface KidsModeContextProps {
 	kidsMode: boolean;
-	setKidsMode: (kidsMode: boolean) => void;
+	setKidsMode: Dispatch<SetStateAction<boolean>>;
 }
 
 export interface AnchorLegConextProps {
 	anchorLeg: number;
-	setAnchorLeg: (anchorLeg: number) => void;
+	setAnchorLeg: Dispatch<SetStateAction<number>>;
 }
 
 export interface TutorialContextProps {
 	tutorialStep: number;
-	setTutorialStep: (tutorial: number) => void;
+	setTutorialStep: Dispatch<SetStateAction<number>>;
 }
 
 const BenchContext = createContext<BlockContextProps>({

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useState } from 'react';
 import { ConnectDropTarget, useDrop } from 'react-dnd';
 import { macMahon } from '../common/constants';
 import useOrientation from '../common/useOrientation';
@@ -19,7 +19,7 @@ import useLocalStorage from '../common/useLocalStorage';
 
 type useHiddenPanelReturn = {
 	anchorLeg: number;
-	setAnchorLeg: (anchorLeg: number) => void;
+	setAnchorLeg: Dispatch<SetStateAction<number>>;
 	dummyRef: ConnectDropTarget;
 };
 
@@ -34,7 +34,7 @@ const useHiddenPanel = (): useHiddenPanelReturn => {
 
 	const { updateSeat } = seatService;
 	const [, dummyRef] = useDrop(
-		() => ({
+		{
 			accept: macMahon,
 			drop: (item: BlockProps, monitor) => {
 				const seatNumber = benchBlockList.indexOf(undefined);
@@ -58,7 +58,7 @@ const useHiddenPanel = (): useHiddenPanelReturn => {
 					updatedStagedBlockList && setStagedBlockList(updatedStagedBlockList);
 				}
 			},
-		}),
+		},
 		[benchBlockList, stagedBlockList, bumper]
 	);
 

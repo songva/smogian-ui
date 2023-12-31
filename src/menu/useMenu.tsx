@@ -101,9 +101,11 @@ const useMenu = () => {
 		setTimeout(() => setTransition('none'), 290);
 
 		const presetTopOnTheFence =
-			Math.abs(previousClientY.current - touchStartY.current) > menuHeight / 2 === (presetTop === PresetTop.HIDE)
-				? PresetTop.SHOW
-				: PresetTop.HIDE;
+			Math.abs(previousClientY.current - touchStartY.current) > menuHeight / 2
+				? presetTop === PresetTop.HIDE
+					? PresetTop.SHOW
+					: PresetTop.HIDE
+				: presetTop;
 		setPresetTop(
 			trendDirection.current === 0 ? presetTopOnTheFence : trendDirection.current > 0 ? PresetTop.SHOW : PresetTop.HIDE
 		);
@@ -165,7 +167,7 @@ const useMenu = () => {
 		window.document.documentElement.style.backgroundColor = darkTheme
 			? lightThemeStyle.backgroundColor
 			: darkThemeStyle.backgroundColor;
-		setDarkTheme(!darkTheme);
+		setDarkTheme(darkTheme => !darkTheme);
 	};
 
 	return {

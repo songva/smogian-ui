@@ -1,6 +1,7 @@
 import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { StyleSheet, css } from 'aphrodite/no-important';
+import { isMobile } from '../common/utils';
 import { Pattern, PatternOrientation } from '../common/interfaces';
 import {
 	BenchContext,
@@ -14,7 +15,7 @@ import {
 	TutorialContextProps,
 } from '../common/contexts';
 import usePrevious from '../common/usePrevious';
-import { darkThemeStyle, lightThemeStyle } from '../app/App.style';
+import { lightThemeStyle } from '../app/App.style';
 import useTutorialSvg from './useTutorialSvg';
 import Block from '../block/Block';
 import styles from './Tutorial.style';
@@ -39,7 +40,7 @@ const enum Display {
 }
 
 const Tutorial: FC = () => {
-	const { darkTheme, setDarkTheme } = useContext<ThemeContextProps>(ThemeContext);
+	const { setDarkTheme } = useContext<ThemeContextProps>(ThemeContext);
 	const { ratio, orientation } = useContext<OrientationContextProps>(OrientationContext);
 	const { tutorialStep, setTutorialStep } = useContext<TutorialContextProps>(TutorialContext);
 	const { blockList: benchBlockList } = useContext<BlockContextProps>(BenchContext);
@@ -58,7 +59,6 @@ const Tutorial: FC = () => {
 	const radius = dvmin > 5 ? 10 : 6;
 	const cornerPointBuffer = 10;
 	const sal = Number(getComputedStyle(document.documentElement).getPropertyValue('--sal').replaceAll(/[^\d]/g, ''));
-	const isMobile = /iPhone|iPad|iPod|Android|crios/i.test(window.navigator.userAgent);
 
 	const checkBenchBlockListSize = () => benchBlockList.filter(block => block).length;
 
@@ -144,7 +144,7 @@ const Tutorial: FC = () => {
 			height = 0,
 		} = document.getElementById('sample')?.getBoundingClientRect() || {};
 		setD(`M 0 0 ${drawSampleBlockPath({ bottom, right, width, height })} ${drawCloseIcon()} Z`);
-		setSvgMethod(() => (isMobile ? doubleTap : mouseWheel)({ top: bottom - height, left: right - width * 0.65 }));
+		setSvgMethod(() => (isMobile() ? doubleTap : mouseWheel)({ top: bottom - height, left: right - width * 0.65 }));
 	};
 
 	const prepareStep2 = (): void => {

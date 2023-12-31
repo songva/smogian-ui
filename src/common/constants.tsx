@@ -2,7 +2,7 @@ import { BlockList, Palettes, PalettesMap } from './interfaces';
 import { GridDimension } from './useOrientation';
 
 const localStorageSettings = 'MacMahonSquaresSettings';
-const ligthBumperColor = 'white';
+const lightBumperColor = 'white';
 const darkBumperColor = '#929090';
 
 const defaultPalettes: Palettes = ['#f21137', '#5a8100', '#ffb400'];
@@ -108,7 +108,7 @@ const toasts = ['GOOD JOB', 'NICE JOB', 'SUPER DUPER', 'GREAT WORK', 'WELL DONE'
 
 export {
 	localStorageSettings,
-	ligthBumperColor,
+	lightBumperColor,
 	darkBumperColor,
 	palettesMap,
 	macMahon,

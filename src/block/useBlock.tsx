@@ -1,9 +1,8 @@
-import { MouseEvent, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { useDrag } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
-import { useDoubleTap } from 'use-double-tap';
-import { landscapeDimension, macMahon, palettesMap, protraitDimension } from '../common/constants';
+import { macMahon, palettesMap } from '../common/constants';
 import {
 	BlockAnimation,
 	BlockList,
@@ -12,7 +11,6 @@ import {
 	Opacity,
 	Pattern,
 	PatternDirection,
-	StageOrientationLock,
 	TransitionDuration,
 	ZIndex,
 } from '../common/interfaces';
@@ -54,11 +52,16 @@ interface UseBlockReturn {
 		animationName: string;
 		animationDuration: TransitionDuration;
 	};
-	onWheelScroll?: (event: WheelEvent) => void;
-	onDoubleTap?: (event: any) => void;
 }
 
-const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, pattern, palettes }) => {
+const useBlock: (props: BlockProps) => UseBlockReturn = ({
+	isStage,
+	seatNumber,
+	pattern,
+	palettes,
+	onClickOverride,
+}) => {
+	const { updateBumper, validateMove, getDimension } = seatService;
 	const onThrottleWheelScroll = useContext<ThrottleContextProps>(ThrottleContext);
 	const { blockList, setBlockList } = useContext<BlockContextProps>(isStage ? StagedContext : BenchContext);
 	const { bumper, setBumper } = useContext<BumperContextProps>(BumperContext);
@@ -66,14 +69,15 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 	const { kidsMode } = useContext<KidsModeContextProps>(KidsModeContext);
 	const { isLandscape, stageOrientationLock } = useContext<OrientationContextProps>(OrientationContext);
 	const { anchorLeg } = useContext<AnchorLegConextProps>(AnchorLegContext);
-	const scrollRef = useRef<HTMLDivElement>();
 
 	const [rotate, setRotate] = useState<number>(0);
 	const [transitionDuration, setTransitionDuration] = useState<TransitionDuration>(TransitionDuration.STATIC);
 	const [animationName, setAnimationName] = useState<BlockAnimation>(BlockAnimation.EMPTY);
 	const [zIndex, setZIndex] = useState(ZIndex.BACK);
 	const freeze = useRef<boolean>(false);
-	const { updateBumper, validateMove, getDimension } = seatService;
+	const blockRef = useRef<HTMLDivElement>();
+	const bumperColorRef = useRef<number>();
+	const triggerSingleClick = useRef<boolean>(true);
 
 	const getWidth = useCallback(
 		() => getDimension({ isLandscape, stageOrientationLock }).columnSpan,
@@ -112,19 +116,27 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 	const checkAndUpdateBumper = (
 		updatedBlock: Pattern | undefined,
 		updatedBlockList: BlockList
-	): BumperColorAndCoordinates | undefined =>
-		isStage && !kidsMode && updatedBlock
-			? updateBumper({
-					isLandscape,
-					stageOrientationLock,
-					isSourceFromStage: true,
-					isTargetingStage: true,
-					movedPattern: updatedBlock || [0, 0, 0, 0],
-					stagedBlockList: blockList,
-					updatedStagedBlockList: updatedBlockList,
-					seatNumber,
-			  })
+	): BumperColorAndCoordinates | undefined => {
+		return isStage && !kidsMode && updatedBlock
+			? {
+					...bumper,
+					...updateBumper({
+						isLandscape,
+						stageOrientationLock,
+						isSourceFromStage: true,
+						isTargetingStage: true,
+						movedPattern: updatedBlock || [0, 0, 0, 0],
+						stagedBlockList: blockList,
+						updatedStagedBlockList: updatedBlockList,
+						seatNumber,
+					}),
+			  }
 			: undefined;
+	};
+
+	useEffect(() => {
+		bumperColorRef.current = bumper.bumperColor;
+	}, [bumper.bumperColor]);
 
 	const rotateBlock = (deltaY: number): void => {
 		const toClockwise = deltaY > 0;
@@ -153,7 +165,7 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 		const updatedBlockList = blockList.map((block, i) => (i === seatNumber ? updatedBlock : block));
 		const updatedBumper = checkAndUpdateBumper(updatedBlock, updatedBlockList);
 		setTimeout(() => {
-			setBumper({ ...bumper, ...updatedBumper });
+			setBumper({ ...bumper, ...updatedBumper, bumperColor: bumperColorRef.current });
 			setBlockList(updatedBlockList);
 			setTransitionDuration(TransitionDuration.STATIC);
 			setRotate(0);
@@ -175,21 +187,38 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 		return Math.floor(Math.sqrt(Math.pow(seatX - anchorLegX, 2) + Math.pow(seatY - anchorLegY, 2)));
 	};
 
-	const { onClick } = useDoubleTap((event: MouseEvent) => {
+	const onSingleTap = (event: Event) => {
 		event.preventDefault();
-		event.bubbles = false;
+		triggerSingleClick.current = true;
+		setTimeout(() => {
+			triggerSingleClick.current && rotateBlock(-90);
+		}, 180);
+	};
+
+	const onDoubleTap = (event: Event) => {
+		event.preventDefault();
+		triggerSingleClick.current = false;
 		rotateBlock(90);
-	});
+	};
 
 	const onWheelScroll = (event: WheelEvent) => onThrottleWheelScroll(event.deltaY, rotateBlock);
 
 	useEffect(() => {
+		blockRef.current?.addEventListener('wheel', onWheelScroll, { passive: false });
+		blockRef.current?.addEventListener('click', onSingleTap);
+		blockRef.current?.addEventListener('dblclick', onDoubleTap);
+		onClickOverride && blockRef.current?.addEventListener('click', onClickOverride);
+
+		return () => {
+			blockRef.current?.removeEventListener('wheel', onWheelScroll);
+			blockRef.current?.removeEventListener('click', onSingleTap);
+			blockRef.current?.removeEventListener('dblclick', onDoubleTap);
+			onClickOverride && blockRef.current?.removeEventListener('click', onClickOverride);
+		};
+	}, [isStage, seatNumber, palettes, blockList]);
+
+	useEffect(() => {
 		dragPreview(getEmptyImage(), { captureDraggingState: true });
-		if (scrollRef.current) {
-			scrollRef.current.onwheel = (e: WheelEvent) => {
-				onWheelScroll(e);
-			};
-		}
 	});
 
 	useEffect(() => {
@@ -215,6 +244,7 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 			frontLayerStyle: {
 				backgroundImage,
 			},
+			dragRef: dragRef(blockRef),
 		};
 	}
 	const id =
@@ -232,7 +262,7 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 	return {
 		id,
 		colors,
-		dragRef: dragRef(scrollRef),
+		dragRef: dragRef(blockRef),
 		dndStyle: {
 			opacity,
 			zIndex,
@@ -247,8 +277,6 @@ const useBlock: (props: BlockProps) => UseBlockReturn = ({ isStage, seatNumber, 
 			animationName,
 			animationDuration: transitionDuration,
 		},
-		onWheelScroll,
-		onDoubleTap: onClick,
 	};
 };
 
