@@ -1,8 +1,8 @@
-import { CSSProperties, ReactElement, useCallback } from 'react';
+import { CSSProperties, useCallback } from 'react';
 import { css } from 'aphrodite/no-important';
-import styles from './Menu.style';
 
-type SvgButton = (onclick?: () => void) => ReactElement;
+import styles from './Menu.styles';
+import { SvgButton } from './Menu.types';
 
 const cursorStyle: (onclick: (() => void) | undefined) => CSSProperties | undefined = onclick =>
 	onclick && { cursor: 'pointer', opacity: 0.4 };

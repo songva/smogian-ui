@@ -1,5 +1,5 @@
+import { Pattern } from './common.types';
 import { rotateClockwise, rotateAntiClockwise } from './utils';
-import { Pattern } from './interfaces';
 
 describe('rotateClockwise', () => {
 	test('rotate an 4 elements array clockwise should return a new array rotated clockwise', () => {

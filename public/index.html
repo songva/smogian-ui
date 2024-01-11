@@ -10,142 +10,134 @@
   <link rel="manifest" href="/asset-manifest.json">
   <link rel="shortcut icon" href="/fav.ico">
   <link rel="apple-touch-icon" href="/fav.png">
-  <meta property='og:title' content='MacMahon Squares' />
-  <meta property='og:image' itemprop="image" content='http://www.smogian.com/fav.png' />
-  <meta property='og:description' content='MacMahon Squares Online ' />
-  <meta property='og:url' content='https://www.smogian.com/' />
-  <meta property='og:image:width' content='560' />
-  <meta property='og:image:height' content='560' />
   <title>MacMahon Squares</title>
-
-  <script>
-    if (typeof window.__REACT_DEVTOOLS_GLOBAL_HOOK__ === 'object') {
-      __REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () { };
-    }
-
-    console.log(
-      `%c######################################################\r\n` +
-      `#                                                    #\r\n` +
-      `#    The author of this site is looking for a job    #\r\n` +
-      `#      %csoong.gau@gmail.com%c  Thank you very much      #\r\n` +
-      `#                                                    #\r\n` +
-      `######################################################`
-      , 'color: #00aaf4; font-family: monospace', 'color: #ffb403; font-family: monospace', 'color: #00aaf4; font-family: monospace');
-
-  </script>
-
+  <meta name="description" content="MacMahon Squares Online">
+  <meta property="og:title" content="MacMahon Squares">
+  <meta property="og:description" content="MacMahon Squares Online">
+  <meta property="og:type" content="image/png" />
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="www.smogian.com">
+  <meta property="twitter:url" content="www.smogian.com">
+  <meta name="twitter:title" content="MacMahon Squares">
+  <meta name="twitter:description" content="MacMahon Squares Online - web based game">
+  <meta name=" twitter:image" content="https://www.smogian.com/thumbnail.png">
+  <meta property="og:image" itemprop="image" content="https://www.smogian.com/thumbnail.png" />
+  <meta property="og:image:secure_url" itemprop="image" content="https://www.smogian.com/thumbnail.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="MacMahon Squares Online - web based game" />
+  <meta property="og:url" content="https://www.smogian.com/" />
+  <meta property="og:image:width" content="1707" />
+  <meta property="og:image:height" content="1080" />
 
   <style>
     @property --position-x-percentage {
       syntax: "<percentage>";
       inherits: false;
-      initial-value: 65%;
+      initial-value: 65%
     }
 
     @property --position-x-left-percentage {
       syntax: "<percentage>";
       inherits: false;
-      initial-value: 64%;
+      initial-value: 64%
     }
 
     @property --position-x-right-percentage {
       syntax: "<percentage>";
       inherits: false;
-      initial-value: 66%;
+      initial-value: 66%
     }
 
     @property --position-y-percentage {
       syntax: "<percentage>";
       inherits: false;
-      initial-value: 35%;
+      initial-value: 35%
     }
 
     @property --position-y-down-percentage {
       syntax: "<percentage>";
       inherits: false;
-      initial-value: 36%;
+      initial-value: 36%
     }
 
     @property --radial-percentage {
       syntax: "<percentage>";
       inherits: false;
-      initial-value: 1%;
+      initial-value: 1%
     }
 
     @keyframes clockwiseKeyframes {
       from {
         --position-x-left-percentage: 64%;
         --position-x-percentage: 65%;
-        --position-x-right-percentage: 66%;
+        --position-x-right-percentage: 66%
       }
 
       to {
         --position-x-left-percentage: 34%;
         --position-x-percentage: 35%;
-        --position-x-right-percentage: 36%;
+        --position-x-right-percentage: 36%
       }
     }
 
     @keyframes antiClockwiseKeyframes {
       from {
         --position-y-percentage: 35%;
-        --position-y-down-percentage: 36%;
+        --position-y-down-percentage: 36%
       }
 
       to {
         --position-y-percentage: 65%;
-        --position-y-down-percentage: 66%;
+        --position-y-down-percentage: 66%
       }
     }
 
     @keyframes paintKeyframes {
       from {
-        --radial-percentage: 0%;
+        --radial-percentage: 0%
       }
 
       to {
-        --radial-percentage: 100%;
+        --radial-percentage: 100%
       }
     }
 
     @keyframes fadeKeyframes {
       from {
-        --radial-percentage: 100%;
+        --radial-percentage: 100%
       }
 
       to {
-        --radial-percentage: 0%;
+        --radial-percentage: 0%
       }
     }
 
     @font-face {
-      font-family: 'Gill Sans regular';
-      src: url('gill_sans.woff') format('woff');
-      font-weight: normal;
+      font-family: "Gill Sans regular";
+      src: url("gill_sans.woff") format("woff");
+      font-weight: 400;
       font-style: normal;
+      font-display: swap
     }
 
     html {
       -webkit-text-size-adjust: none;
-      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) env(safe-area-inset-left);
+      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom) env(safe-area-inset-left)
     }
 
     body {
       height: 100%;
       width: 100%;
-      margin: 0px;
+      margin: 0;
       user-select: none;
-      overflow: hidden;
-    }
-
-    * {
-      touch-action: manipulation;
+      overflow: hidden
     }
 
     :root {
-      --sal: env(safe-area-inset-left);
+      --sal: env(safe-area-inset-left)
     }
   </style>
+  <script>"object" == typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && (__REACT_DEVTOOLS_GLOBAL_HOOK__.inject = function () { })</script>
 </head>
 
 <body>

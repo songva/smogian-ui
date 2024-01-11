@@ -1,50 +1,15 @@
-import { Dispatch, SetStateAction, createContext } from 'react';
-import { BlockList, BumperColorAndCoordinates, StageOrientationLock } from './interfaces';
-import { OrientationValue } from './useOrientation';
-
-export interface BlockContextProps {
-	blockList: BlockList;
-	setBlockList: (block: BlockList) => void;
-}
-
-export interface BumperContextProps {
-	bumper: BumperColorAndCoordinates;
-	setBumper: (bumper: BumperColorAndCoordinates) => void;
-}
-
-export interface ThemeContextProps {
-	darkTheme: boolean;
-	palettes: string;
-	setDarkTheme: (darkTheme: boolean) => void;
-	setPalettes: (palettes: string) => void;
-}
-
-export type ThrottleContextProps = (deltaY: number, func: (deltaY: number) => void) => void;
-
-export interface OrientationContextProps {
-	orientation: OrientationValue;
-	isLandscape: boolean;
-	ratio: number;
-	stageOrientationLock: StageOrientationLock;
-	setOrientation: (orientation: OrientationValue) => void;
-	setStageOrientationLock: (stageOrientationLock: StageOrientationLock) => void;
-	setRatio: Dispatch<SetStateAction<number>>;
-}
-
-export interface KidsModeContextProps {
-	kidsMode: boolean;
-	setKidsMode: (kidsMode: boolean) => void;
-}
-
-export interface AnchorLegConextProps {
-	anchorLeg: number;
-	setAnchorLeg: (anchorLeg: number) => void;
-}
-
-export interface TutorialContextProps {
-	tutorialStep: number;
-	setTutorialStep: (tutorial: number) => void;
-}
+import { createContext } from 'react';
+import { StageOrientationLock } from './enums';
+import {
+	AnchorLegConextProps,
+	BlockContextProps,
+	BumperContextProps,
+	KidsModeContextProps,
+	OrientationContextProps,
+	ThemeContextProps,
+	ThrottleContextProps,
+	TutorialContextProps,
+} from './common.types';
 
 const BenchContext = createContext<BlockContextProps>({
 	blockList: [],

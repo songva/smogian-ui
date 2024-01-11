@@ -1,40 +1,19 @@
 import { useContext, useEffect } from 'react';
 import { throttle } from 'lodash';
-import { landscapeDimension, protraitDimension } from './constants';
-import { rotateClockwise, rotateAntiClockwise, isIPhone, getRatio, rotateHalfCircle } from './utils';
+
 import {
-	BenchContext,
 	BlockContextProps,
-	OrientationContext,
+	BlockList,
+	GridDimension,
 	OrientationContextProps,
-	StagedContext,
-} from './contexts';
-import { BlockList, Pattern, StageOrientationLock } from './interfaces';
+	Pattern,
+	RotateProps,
+} from './common.types';
+import { landscapeDimension, protraitDimension } from './constants';
+import { OrientationValue, RotateDegree, StageOrientationLock } from './enums';
+import { rotateClockwise, rotateAntiClockwise, isIPhone, getRatio, rotateHalfCircle } from './utils';
+import { BenchContext, OrientationContext, StagedContext } from './contexts';
 import usePrevious from './usePrevious';
-
-export enum OrientationValue {
-	'landscape-primary' = 0,
-	'portrait-primary' = 90,
-	'landscape-secondary' = 180,
-	'portrait-secondary' = -90,
-}
-
-export interface GridDimension {
-	rowSpan: number;
-	columnSpan: number;
-}
-
-enum RotateDegree {
-	CLOCKWISE = 90,
-	ANTICLOCKWISE = 270,
-	SEMICIRCLE = 180,
-}
-
-interface RotateProps {
-	rotateDegree: RotateDegree;
-	isStageLandscape: boolean;
-	originList: BlockList;
-}
 
 const rotateAttributes: Record<
 	RotateDegree,
@@ -152,6 +131,42 @@ const useOrientation = () => {
 		});
 		setStagedBlockList(rotatedStagedBlockList);
 	}, [stageOrientationLock]);
+
+	useEffect(() => {
+		if (window.outerHeight > window.screen.height) {
+			function sendTouchEvent(x: number, y: number, element: HTMLElement, eventType: string) {
+				const touchObj = new Touch({
+					identifier: Date.now(),
+					target: element,
+					clientX: x,
+					clientY: y,
+					radiusX: 2.5,
+					radiusY: 2.5,
+					rotationAngle: 10,
+					force: 0.5,
+				});
+
+				const touchEvent = new TouchEvent(eventType, {
+					cancelable: true,
+					bubbles: true,
+					touches: [touchObj],
+					targetTouches: [],
+					changedTouches: [touchObj],
+					shiftKey: true,
+				});
+
+				element.dispatchEvent(touchEvent);
+			}
+
+			const myElement = document.getElementsByTagName('body')[0];
+
+			if (myElement) {
+				sendTouchEvent(150, 150, myElement, 'touchstart');
+				sendTouchEvent(220, 200, myElement, 'touchmove');
+				sendTouchEvent(220, 200, myElement, 'touchend');
+			}
+		}
+	});
 };
 
 export default useOrientation;

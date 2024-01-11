@@ -74,6 +74,42 @@ const styles = StyleSheet.create({
 	dropAnimation: {
 		animationName: dropKeyframe,
 	},
+
+	strokeStyle: {
+		stroke: 'white',
+		fill: 'none',
+		strokeWidth: '3px',
+	},
+	roundStrokeStyle: {
+		stroke: 'white',
+		fill: 'none',
+		strokeWidth: '3px',
+		strokeLinecap: 'round',
+	},
+	fillStyle: {
+		fill: '#00000099',
+	},
+	dndAnimationStyle: {
+		animationDuration: '2s',
+		animationIterationCount: 'infinite',
+		animationDelay: '0.0125s',
+	},
+	staticSvg: {
+		height: '8dvmax',
+		aspectRatio: '1 / 1',
+		position: 'absolute',
+		zIndex: 12,
+		pointerEvents: 'none',
+	},
+	motionSvg: {
+		height: '8dvmax',
+		aspectRatio: '1 / 1',
+		position: 'absolute',
+		zIndex: 12,
+		pointerEvents: 'none',
+		animationDuration: '2s',
+		animationIterationCount: 'infinite',
+	},
 });
 
 export default styles;

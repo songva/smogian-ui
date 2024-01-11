@@ -1,39 +1,28 @@
-import { useContext, useEffect, useRef } from 'react';
-import { ConnectDropTarget, useDrop } from 'react-dnd';
-import { DebouncedFunc, sample, shuffle, throttle } from 'lodash';
-import { BlockList, BumperAnimation, BumperColorAndCoordinates, StageOrientationLock } from '../common/interfaces';
+import { lazy, useContext, useEffect, useRef } from 'react';
+import { useDrop } from 'react-dnd';
+import { sample, shuffle, throttle } from 'lodash';
+
+import { BumperAnimation } from '../common/enums';
 import {
 	StagedContext,
 	BenchContext,
 	BumperContext,
 	ThemeContext,
-	ThemeContextProps,
-	BumperContextProps,
-	BlockContextProps,
-	OrientationContextProps,
 	OrientationContext,
-	AnchorLegConextProps,
 	AnchorLegContext,
 	TutorialContext,
-	TutorialContextProps,
 } from '../common/contexts';
 import { blockSet, macMahon, toasts } from '../common/constants';
 
-type usePanelProps = { isStage?: boolean } | undefined;
-
-interface usePanelReturn {
-	blockList: BlockList;
-	onWheelScroll: DebouncedFunc<(deltaY: number, func: (event: number) => void) => void>;
-	bumper: BumperColorAndCoordinates;
-	palettes: string;
-	isLandscape: boolean;
-	stageOrientationLock: StageOrientationLock;
-	darkTheme: boolean;
-	anchorLeg: number;
-	toast: string;
-	dummyDrop: ConnectDropTarget;
-	reloadPage: () => void;
-}
+import {
+	AnchorLegConextProps,
+	BlockContextProps,
+	BumperContextProps,
+	OrientationContextProps,
+	ThemeContextProps,
+	TutorialContextProps,
+} from '../common/common.types';
+import { usePanelProps, usePanelReturn } from './Panel.types';
 
 const usePanel = (props?: usePanelProps): usePanelReturn => {
 	const { setBlockList: setBenchBlockList } = useContext<BlockContextProps>(BenchContext);
@@ -100,6 +89,7 @@ const usePanel = (props?: usePanelProps): usePanelReturn => {
 		toast: toast.current,
 		dummyDrop,
 		reloadPage,
+		Toast: lazy(() => import('../toast/Toast')),
 	};
 };
 

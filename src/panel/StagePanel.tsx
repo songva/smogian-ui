@@ -1,11 +1,11 @@
 import { CSSProperties, FC, memo } from 'react';
 import { css } from 'aphrodite/no-important';
 import { ThrottleContext } from '../common/contexts';
-import { StageOrientationLock } from '../common/interfaces';
-import { darkBumperColor, ligthBumperColor, palettesMap } from '../common/constants';
+import { StageOrientationLock } from '../common/enums';
+import { darkBumperColor, lightBumperColor, palettesMap } from '../common/constants';
 import usePanel from './usePanel';
 import Seat from '../seat/Seat';
-import styles from './Panel.style';
+import styles from './Panel.styles';
 
 const bumperStyle: CSSProperties = {
 	position: 'relative',
@@ -33,7 +33,7 @@ const StagePanel: FC = () => {
 	const { blockList, onWheelScroll, bumper, palettes, stageOrientationLock, darkTheme, dummyDrop } = usePanel({
 		isStage: true,
 	});
-	const bumperColor = darkTheme ? darkBumperColor : ligthBumperColor;
+	const bumperColor = darkTheme ? darkBumperColor : lightBumperColor;
 	const animationDuration = (bumper.x || 0) > 100 || (bumper.y || 0) > 100 ? '900ms' : '400ms';
 	const animationStyle: CSSProperties = {
 		backgroundImage: `radial-gradient(circle at ${bumper.x}% ${bumper.y}%, ${

@@ -1,8 +1,8 @@
-import { BlockList, Palettes, PalettesMap } from './interfaces';
-import { GridDimension } from './useOrientation';
+import { BlockList, GridDimension, Palettes, PalettesMap } from './common.types';
 
+const bannerText = ' MACMAHON   SQUARES ';
 const localStorageSettings = 'MacMahonSquaresSettings';
-const ligthBumperColor = 'white';
+const lightBumperColor = 'white';
 const darkBumperColor = '#929090';
 
 const defaultPalettes: Palettes = ['#f21137', '#5a8100', '#ffb400'];
@@ -107,8 +107,9 @@ const titleBackgroundPath = [
 const toasts = ['GOOD JOB', 'NICE JOB', 'SUPER DUPER', 'GREAT WORK', 'WELL DONE'];
 
 export {
+	bannerText,
 	localStorageSettings,
-	ligthBumperColor,
+	lightBumperColor,
 	darkBumperColor,
 	palettesMap,
 	macMahon,
