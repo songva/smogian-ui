@@ -1,11 +1,14 @@
 import { FC } from 'react';
 import { css } from 'aphrodite/no-important';
+
 import { palettesMap } from '../common/constants';
-import { Pattern, Ratio, StageOrientationLock } from '../common/interfaces';
+import { MenuPresetTop, Ratio, StageOrientationLock } from '../common/enums';
+import { Pattern } from '../common/common.types';
+
 import Block from '../block/Block';
-import useMenu, { PresetTop } from './useMenu';
+import useMenu from './useMenu';
 import useSvg from './useSvg';
-import styles from './Menu.style';
+import styles from './Menu.styles';
 
 const samplePattern: Pattern = [1, 2, 0, 0];
 
@@ -159,7 +162,7 @@ const Menu: FC = () => {
 					</div>
 				</div>
 			</div>
-			{presetTop === PresetTop.SHOW && ratio <= Ratio.LANDSCAPE && (
+			{presetTop === MenuPresetTop.SHOW && ratio <= Ratio.LANDSCAPE && (
 				<div ref={overlayRef} data-testid="mask" className={css(styles.overlayStyle)} />
 			)}
 		</section>

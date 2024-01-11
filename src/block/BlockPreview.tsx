@@ -1,7 +1,9 @@
 import { FC } from 'react';
 import { usePreview } from 'react-dnd-preview';
 import { css } from 'aphrodite/no-important';
-import Block, { BlockProps } from './Block';
+
+import { BlockProps } from './Block.types';
+import Block from './Block';
 import styles from './Block.style';
 
 const BlockPreview: FC = () => {

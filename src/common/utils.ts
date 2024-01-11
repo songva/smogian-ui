@@ -1,4 +1,4 @@
-import { Pattern } from './interfaces';
+import { Pattern } from './common.types';
 
 const rotateClockwise = (input: Pattern): Pattern => {
 	return [input[3], input[0], input[1], input[2]];

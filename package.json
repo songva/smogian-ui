@@ -25,7 +25,7 @@
     "starts": "sudo node ./node_modules/.bin/react-scripts start",
     "start": "react-scripts start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

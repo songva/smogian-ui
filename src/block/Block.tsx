@@ -1,26 +1,10 @@
-import { FC, useRef, useState } from 'react';
+import { FC } from 'react';
 import { css } from 'aphrodite/no-important';
-import { Palettes, Pattern, PatternDirection, TransitionDuration } from '../common/interfaces';
+import { PatternDirection } from '../common/enums';
 import useBlock from './useBlock';
 import styles from './Block.style';
 import { backLayerClips, frontLayerClips } from '../common/constants';
-
-export interface BlockProps {
-	seatNumber: number;
-	pattern: Pattern;
-	isStage: boolean;
-	overrideStyles?: string[];
-	palettes?: Palettes;
-	onClickOverride?: () => void;
-}
-interface ClipProps {
-	direction: PatternDirection;
-	colors: string[];
-	backLayerStyle?: {
-		animationName: string;
-		animationDuration: TransitionDuration;
-	};
-}
+import { BlockProps, ClipProps } from './Block.types';
 
 const FrontLayerClip: FC<ClipProps> = ({ direction, colors }) => (
 	<div

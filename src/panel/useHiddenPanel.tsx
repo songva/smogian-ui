@@ -1,27 +1,19 @@
-import { Dispatch, SetStateAction, useContext, useState } from 'react';
-import { ConnectDropTarget, useDrop } from 'react-dnd';
+import { useContext, useState } from 'react';
+import { useDrop } from 'react-dnd';
+
 import { macMahon } from '../common/constants';
 import useOrientation from '../common/useOrientation';
+import { BenchContext, BumperContext, KidsModeContext, OrientationContext, StagedContext } from '../common/contexts';
 import {
-	BenchContext,
 	BlockContextProps,
-	BumperContext,
 	BumperContextProps,
-	KidsModeContext,
 	KidsModeContextProps,
-	OrientationContext,
 	OrientationContextProps,
-	StagedContext,
-} from '../common/contexts';
-import seatService from '../seat/seatService';
-import { BlockProps } from '../block/Block';
-import useLocalStorage from '../common/useLocalStorage';
+} from '../common/common.types';
 
-type useHiddenPanelReturn = {
-	anchorLeg: number;
-	setAnchorLeg: Dispatch<SetStateAction<number>>;
-	dummyRef: ConnectDropTarget;
-};
+import seatService from '../seat/seatService';
+import { BlockProps } from '../block/Block.types';
+import { useHiddenPanelReturn } from './Panel.types';
 
 const useHiddenPanel = (): useHiddenPanelReturn => {
 	useOrientation();

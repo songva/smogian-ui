@@ -1,40 +1,19 @@
 import { useContext, useEffect } from 'react';
 import { throttle } from 'lodash';
-import { landscapeDimension, protraitDimension } from './constants';
-import { rotateClockwise, rotateAntiClockwise, isIPhone, getRatio, rotateHalfCircle } from './utils';
+
 import {
-	BenchContext,
 	BlockContextProps,
-	OrientationContext,
+	BlockList,
+	GridDimension,
 	OrientationContextProps,
-	StagedContext,
-} from './contexts';
-import { BlockList, Pattern, StageOrientationLock } from './interfaces';
+	Pattern,
+	RotateProps,
+} from './common.types';
+import { landscapeDimension, protraitDimension } from './constants';
+import { OrientationValue, RotateDegree, StageOrientationLock } from './enums';
+import { rotateClockwise, rotateAntiClockwise, isIPhone, getRatio, rotateHalfCircle } from './utils';
+import { BenchContext, OrientationContext, StagedContext } from './contexts';
 import usePrevious from './usePrevious';
-
-export enum OrientationValue {
-	'landscape-primary' = 0,
-	'portrait-primary' = 90,
-	'landscape-secondary' = 180,
-	'portrait-secondary' = -90,
-}
-
-export interface GridDimension {
-	rowSpan: number;
-	columnSpan: number;
-}
-
-enum RotateDegree {
-	CLOCKWISE = 90,
-	ANTICLOCKWISE = 270,
-	SEMICIRCLE = 180,
-}
-
-interface RotateProps {
-	rotateDegree: RotateDegree;
-	isStageLandscape: boolean;
-	originList: BlockList;
-}
 
 const rotateAttributes: Record<
 	RotateDegree,

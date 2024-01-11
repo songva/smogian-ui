@@ -1,7 +1,8 @@
 import { ReactElement, useContext } from 'react';
 import { StyleSheet, css } from 'aphrodite/no-important';
-import { ThemeContext, ThemeContextProps } from '../common/contexts';
+import { ThemeContext } from '../common/contexts';
 import { palettesMap } from '../common/constants';
+import { ThemeContextProps } from '../common/common.types';
 
 const styles: any = StyleSheet.create({
 	toast: {

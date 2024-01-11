@@ -1,22 +1,26 @@
 import { useContext } from 'react';
 import { ConnectDropTarget, useDrop } from 'react-dnd';
+
+import { PatternOrientation } from '../common/enums';
+import { macMahon } from '../common/constants';
 import {
 	AnchorLegContext,
-	AnchorLegConextProps,
 	BenchContext,
-	BlockContextProps,
 	BumperContext,
-	BumperContextProps,
 	KidsModeContext,
-	KidsModeContextProps,
 	OrientationContext,
-	OrientationContextProps,
 	StagedContext,
 } from '../common/contexts';
-import { macMahon } from '../common/constants';
+import {
+	AnchorLegConextProps,
+	BlockContextProps,
+	BumperContextProps,
+	KidsModeContextProps,
+	OrientationContextProps,
+} from '../common/common.types';
+
 import seatService from './seatService';
-import { BlockProps } from '../block/Block';
-import { PatternOrientation } from '../common/interfaces';
+import { BlockProps } from '../block/Block.types';
 
 interface useSeatProps {
 	seatNumber: number;

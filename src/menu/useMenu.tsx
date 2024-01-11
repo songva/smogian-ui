@@ -1,25 +1,18 @@
 import { CSSProperties, useContext, useEffect, useRef, useState } from 'react';
 import { uniq } from 'lodash';
+
+import { BumperContext, KidsModeContext, OrientationContext, StagedContext, ThemeContext } from '../common/contexts';
+import { MenuPresetTop, Ratio, StageOrientationLock } from '../common/enums';
 import {
 	BlockContextProps,
-	BumperContext,
 	BumperContextProps,
-	KidsModeContext,
 	KidsModeContextProps,
-	OrientationContext,
 	OrientationContextProps,
-	StagedContext,
-	ThemeContext,
 	ThemeContextProps,
-} from '../common/contexts';
-import { Ratio, StageOrientationLock } from '../common/interfaces';
+} from '../common/common.types';
+
 import seatService from '../seat/seatService';
 import { lightThemeStyle, darkThemeStyle } from '../app/App.style';
-
-export const enum PresetTop {
-	HIDE = '2dvmin - 100% - 3px',
-	SHOW = '0%',
-}
 
 const generateOrientationButtonStyle: (props: {
 	previousStageOrientationLock?: StageOrientationLock;
@@ -48,7 +41,9 @@ const useMenu = () => {
 	const { ratio, stageOrientationLock, isLandscape, setStageOrientationLock } =
 		useContext<OrientationContextProps>(OrientationContext);
 	const [transition, setTransition] = useState<string>('');
-	const [presetTop, setPresetTop] = useState<string>(ratio >= Ratio.LANDSCAPE ? PresetTop.SHOW : PresetTop.HIDE);
+	const [presetTop, setPresetTop] = useState<string>(
+		ratio >= Ratio.LANDSCAPE ? MenuPresetTop.SHOW : MenuPresetTop.HIDE
+	);
 	const [offsetTop, setOffsetTop] = useState<string>('0px');
 	const touchStartY = useRef<number>(0);
 	const previousClientY = useRef<number>(0);
@@ -63,7 +58,7 @@ const useMenu = () => {
 	const menuHeight = Math.max(window.innerHeight, window.innerWidth) * 0.29;
 
 	useEffect(() => {
-		setPresetTop(ratio >= Ratio.LANDSCAPE ? PresetTop.SHOW : PresetTop.HIDE);
+		setPresetTop(ratio >= Ratio.LANDSCAPE ? MenuPresetTop.SHOW : MenuPresetTop.HIDE);
 	}, [ratio]);
 
 	useEffect(() => {
@@ -88,10 +83,10 @@ const useMenu = () => {
 		const deltaY = currentY - previousClientY.current;
 		trendDirection.current = deltaY;
 		const offsetY = currentY - touchStartY.current;
-		if (presetTop === PresetTop.HIDE) {
+		if (presetTop === MenuPresetTop.HIDE) {
 			setOffsetTop(`max(0px, min(100% - 2dvmin + 3px, ${offsetY}px))`);
 		}
-		if (presetTop === PresetTop.SHOW) {
+		if (presetTop === MenuPresetTop.SHOW) {
 			setOffsetTop(`max(2dvmin - 3px - 100%, min(0px, ${offsetY}px))`);
 		}
 	};
@@ -102,12 +97,16 @@ const useMenu = () => {
 
 		const presetTopOnTheFence =
 			Math.abs(previousClientY.current - touchStartY.current) > menuHeight / 2
-				? presetTop === PresetTop.HIDE
-					? PresetTop.SHOW
-					: PresetTop.HIDE
+				? presetTop === MenuPresetTop.HIDE
+					? MenuPresetTop.SHOW
+					: MenuPresetTop.HIDE
 				: presetTop;
 		setPresetTop(
-			trendDirection.current === 0 ? presetTopOnTheFence : trendDirection.current > 0 ? PresetTop.SHOW : PresetTop.HIDE
+			trendDirection.current === 0
+				? presetTopOnTheFence
+				: trendDirection.current > 0
+				? MenuPresetTop.SHOW
+				: MenuPresetTop.HIDE
 		);
 		setOffsetTop('0px');
 		touchStartY.current = 0;
@@ -128,7 +127,7 @@ const useMenu = () => {
 	const hideMenu = () => {
 		setTransition('transform 300ms ease-out');
 		setTimeout(() => setTransition('none'), 290);
-		setPresetTop(PresetTop.HIDE);
+		setPresetTop(MenuPresetTop.HIDE);
 	};
 
 	const flipStage = (orientationLock: StageOrientationLock) => {
@@ -149,12 +148,11 @@ const useMenu = () => {
 				blockList
 					.map((block, seatNumber) => (block ? { pattern: block, seatNumber } : { seatNumber: -1 }))
 					.filter(block => block.seatNumber >= 0)
-					.map(block =>
+					.flatMap(block =>
 						(allocateSeat({ seatNumber: block.seatNumber, columnSpan: stageColumnSpan })?.direction || []).map(
 							direction => (block.pattern || [])[direction]
 						)
 					)
-					.flat()
 			);
 			if (bumperColor && bumperColor.length <= 1) {
 				setBumper({ x: 50, y: 50, newBumperColor: bumperColor[0], bumperColor: bumperColor[0] });

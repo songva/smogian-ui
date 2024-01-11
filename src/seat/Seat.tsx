@@ -1,8 +1,11 @@
 import { FC, memo } from 'react';
-import { StyleSheet, css } from 'aphrodite/no-important';
-import { Pattern } from '../common/interfaces';
+import { css } from 'aphrodite/no-important';
+
+import { Pattern } from '../common/common.types';
+
 import Block from '../block/Block';
 import useSeat from './useSeat';
+import styles from './Seat.styles';
 
 export interface SeatProps {
 	seatNumber: number;
@@ -10,25 +13,6 @@ export interface SeatProps {
 	isStage: boolean;
 	isLandscape: boolean;
 }
-
-const styles = StyleSheet.create({
-	seat: {
-		borderRadius: '0.8vmin',
-		height: 'min(11dvh, 8dvw)',
-		aspectRatio: '1 / 1',
-		userSelect: 'none',
-	},
-	seatExLandscape: {
-		'@media (min-aspect-ratio: 2 )': {
-			height: '12dvmin',
-		},
-	},
-	seatPortrait: {
-		'@media (max-aspect-ratio: 1)': {
-			height: 'min(11dvw, 8dvh)',
-		},
-	},
-});
 
 const Seat: FC<SeatProps> = ({ occupier, seatNumber, isStage }) => {
 	const { id, dropRef } = useSeat({ seatNumber, isStage });

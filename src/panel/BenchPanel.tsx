@@ -1,13 +1,14 @@
-import { FC, memo } from 'react';
+import { FC, Suspense, memo } from 'react';
 import { css } from 'aphrodite/no-important';
+
 import { ThrottleContext } from '../common/contexts';
-import Seat from '../seat/Seat';
+
 import usePanel from './usePanel';
-import styles from './Panel.style';
-import Toast from '../toast/Toast';
+import Seat from '../seat/Seat';
+import styles from './Panel.styles';
 
 const BenchPanel: FC = () => {
-	const { blockList, onWheelScroll, anchorLeg, toast, reloadPage, darkTheme } = usePanel();
+	const { blockList, onWheelScroll, anchorLeg, toast, reloadPage, darkTheme, Toast } = usePanel();
 
 	return (
 		<section className={css(styles.benchPanelPortrait, styles.benchPanel, styles.benchPanelExLandscape)}>
@@ -32,7 +33,9 @@ const BenchPanel: FC = () => {
 					<section
 						className={css(styles.benchPanel, styles.benchPanelPortrait, styles.benchPanelExLandscape, styles.toast)}
 					>
-						<Toast>{toast}</Toast>
+						<Suspense fallback={<></>}>
+							<Toast>{toast}</Toast>
+						</Suspense>
 						<svg viewBox="0 0 100 100" className={css(styles.replayIcon)} onClick={reloadPage}>
 							<path
 								className={css(styles.replaySvgPath, darkTheme && styles.replaySvgPathDark)}

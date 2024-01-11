@@ -15,8 +15,8 @@ import StagePanel from '../panel/StagePanel';
 import BenchPanel from '../panel/BenchPanel';
 import BlockPreview from '../block/BlockPreview';
 import Banner from '../banner/Banner';
-import { appStyle, lightThemeStyle, darkThemeStyle } from './App.style';
 import Tutorial from '../tutorial/Tutorial';
+import { appStyle, lightThemeStyle, darkThemeStyle } from './App.style';
 
 const App: FC = () => {
 	const {

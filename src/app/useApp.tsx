@@ -1,38 +1,16 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { shuffle } from 'lodash';
-import type { BackendFactory } from 'dnd-core';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { BlockList, BumperColorAndCoordinates, Palettes, StageOrientationLock } from '../common/interfaces';
+
+import { OrientationValue, StageOrientationLock } from '../common/enums';
 import { blockSet, palettesMap } from '../common/constants';
 import useLocalStorage from '../common/useLocalStorage';
 import { getRatio } from '../common/utils';
-import { OrientationValue } from '../common/useOrientation';
-import { darkThemeStyle, lightThemeStyle } from './App.style';
+import { BlockList } from '../common/common.types';
 
-interface useAppReturn {
-	isLandscape: boolean;
-	stagedBlockList: BlockList;
-	benchBlockList: BlockList;
-	palettes: string;
-	orientation: OrientationValue;
-	bumper: BumperColorAndCoordinates;
-	ratio: number;
-	stageOrientationLock: StageOrientationLock;
-	kidsMode: boolean;
-	darkTheme: boolean;
-	tutorialStep: number;
-	setStagedBlockList: Dispatch<SetStateAction<BlockList>>;
-	setBenchBlockList: Dispatch<SetStateAction<BlockList>>;
-	setPalettes: Dispatch<SetStateAction<string>>;
-	setOrientation: Dispatch<SetStateAction<OrientationValue>>;
-	setBumper: Dispatch<SetStateAction<BumperColorAndCoordinates>>;
-	setRatio: Dispatch<SetStateAction<number>>;
-	setStageOrientationLock: Dispatch<SetStateAction<StageOrientationLock>>;
-	setKidsMode: Dispatch<SetStateAction<boolean>>;
-	setDarkTheme: Dispatch<SetStateAction<boolean>>;
-	setTutorialStep: Dispatch<SetStateAction<number>>;
-	backend: BackendFactory;
-}
+import { useAppReturn } from './App.types';
+import { BumperColorAndCoordinates } from '../panel/Panel.types';
+import { darkThemeStyle, lightThemeStyle } from './App.style';
 
 const useApp = (): useAppReturn => {
 	const [benchBlockList, setBenchBlockList] = useState<BlockList>(shuffle(blockSet));

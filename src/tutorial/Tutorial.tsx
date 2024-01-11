@@ -1,24 +1,23 @@
 import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { isEqual } from 'lodash';
 import { StyleSheet, css } from 'aphrodite/no-important';
+
 import { isMobile } from '../common/utils';
-import { Pattern, PatternOrientation } from '../common/interfaces';
-import {
-	BenchContext,
-	BlockContextProps,
-	OrientationContext,
-	OrientationContextProps,
-	StagedContext,
-	ThemeContext,
-	ThemeContextProps,
-	TutorialContext,
-	TutorialContextProps,
-} from '../common/contexts';
+import { PatternOrientation } from '../common/enums';
+import { BenchContext, OrientationContext, StagedContext, ThemeContext, TutorialContext } from '../common/contexts';
 import usePrevious from '../common/usePrevious';
+import {
+	BlockContextProps,
+	OrientationContextProps,
+	Pattern,
+	ThemeContextProps,
+	TutorialContextProps,
+} from '../common/common.types';
+
 import { lightThemeStyle } from '../app/App.style';
 import useTutorialSvg from './useTutorialSvg';
 import Block from '../block/Block';
-import styles from './Tutorial.style';
+import styles from './Tutorial.styles';
 
 const seatOffsetMap = {
 	[PatternOrientation.TOP_LEFT]: [1, 0],
@@ -53,7 +52,7 @@ const Tutorial: FC = () => {
 	const sampleBlock = useRef<Pattern>();
 	const seatOrientation = useRef<PatternOrientation>(PatternOrientation.TOP_LEFT);
 	const prevOrientation = usePrevious(orientation);
-	const { mouseWheel, doubleTap, dnd } = useTutorialSvg();
+	const { mouseWheelUp, mouseWheelDown, singleTap, doubleTap, dnd } = useTutorialSvg();
 
 	const dvmin = Math.min(window.innerWidth, window.innerHeight) / 100;
 	const radius = dvmin > 5 ? 10 : 6;
@@ -132,8 +131,7 @@ const Tutorial: FC = () => {
        H 0
        `;
 
-	const prepareStep1 = (): void => {
-		setDarkTheme(false);
+	const prepareRotateStep = (): { bottom: number; right: number; width: number; height: number } => {
 		window.document.documentElement.style.backgroundColor = '#303030';
 		setSvgMethod(() => {});
 		sampleBlock.current = benchBlockList.find(block => block && getSampleBlockOrientation(block));
@@ -144,10 +142,21 @@ const Tutorial: FC = () => {
 			height = 0,
 		} = document.getElementById('sample')?.getBoundingClientRect() || {};
 		setD(`M 0 0 ${drawSampleBlockPath({ bottom, right, width, height })} ${drawCloseIcon()} Z`);
-		setSvgMethod(() => (isMobile() ? doubleTap : mouseWheel)({ top: bottom - height, left: right - width * 0.65 }));
+		return { bottom, right, width, height };
+	};
+
+	const prepareStep1 = (): void => {
+		setDarkTheme(false);
+		const { bottom, right, width, height } = prepareRotateStep();
+		setSvgMethod(() => (isMobile() ? singleTap : mouseWheelUp)({ top: bottom - height, left: right - width * 0.65 }));
 	};
 
 	const prepareStep2 = (): void => {
+		const { bottom, right, width, height } = prepareRotateStep();
+		setSvgMethod(() => (isMobile() ? doubleTap : mouseWheelDown)({ top: bottom - height, left: right - width * 0.65 }));
+	};
+
+	const prepareStep3 = (): void => {
 		const {
 			bottom = 0,
 			right = 0,
@@ -189,7 +198,7 @@ const Tutorial: FC = () => {
 		setSvgMethod(() => dnd({ dndAnimation: dndKeyframes.dndAnimation, top: bottom - height, left: right - width }));
 	};
 
-	const prepareStep3 = (): void => {
+	const prepareStep4 = (): void => {
 		const {
 			bottom = 0,
 			right = 0,
@@ -235,7 +244,7 @@ const Tutorial: FC = () => {
 		}, 100);
 	};
 
-	const prepareStep4 = (): void => {
+	const prepareStep5 = (): void => {
 		fixIPhoneSideMargin();
 		setSvgMethod(() => {});
 		setVisible(false);
@@ -256,18 +265,27 @@ const Tutorial: FC = () => {
 
 	const matchStep = (): number => {
 		const blockSize = checkBenchBlockListSize();
+		const rotatedBlock = benchBlockList.find(block => block && getSampleBlockOrientation(block)) || [];
 		return currentStep.current === 1 &&
 			sampleBlock.current &&
-			!isEqual(
-				sampleBlock.current,
-				benchBlockList.find(block => block && getSampleBlockOrientation(block))
-			) &&
+			sampleBlock.current[0] === rotatedBlock[1] &&
+			sampleBlock.current[1] === rotatedBlock[2] &&
+			sampleBlock.current[2] === rotatedBlock[3] &&
+			sampleBlock.current[3] === rotatedBlock[0] &&
 			prevOrientation === orientation
 			? 2
-			: blockSize === 23 && currentStep.current === 2
+			: currentStep.current === 2 &&
+			  sampleBlock.current &&
+			  sampleBlock.current[0] === rotatedBlock[3] &&
+			  sampleBlock.current[1] === rotatedBlock[0] &&
+			  sampleBlock.current[2] === rotatedBlock[1] &&
+			  sampleBlock.current[3] === rotatedBlock[2] &&
+			  prevOrientation === orientation
 			? 3
-			: blockSize === 22 && currentStep.current === 3
+			: blockSize === 23 && currentStep.current === 3
 			? 4
+			: blockSize === 22 && currentStep.current === 4
+			? 5
 			: currentStep.current;
 	};
 
@@ -281,11 +299,11 @@ const Tutorial: FC = () => {
 			setTutorialStep(1);
 		}
 		const nextStep = matchStep();
-		if (nextStep === 4 && currentStep.current === 4) {
+		if (nextStep === 5 && currentStep.current === 5) {
 			return;
 		}
 		currentStep.current = matchStep();
-		if (currentStep.current === 2) {
+		if (currentStep.current === 2 || currentStep.current === 3) {
 			setSvgMethod(() => {});
 		}
 		setTimeout(
@@ -298,6 +316,8 @@ const Tutorial: FC = () => {
 					prepareStep3();
 				} else if (currentStep.current === 4) {
 					prepareStep4();
+				} else if (currentStep.current === 5) {
+					prepareStep5();
 				}
 			},
 			/crios/i.test(window.navigator.userAgent) ? 200 : 0

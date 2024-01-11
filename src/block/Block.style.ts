@@ -7,6 +7,7 @@ export default StyleSheet.create({
 		position: 'relative',
 		userSelect: 'none',
 		transform: 'translateZ(0)',
+		cursor: 'grab',
 		'-webkit-tap-highlight-color': 'transparent',
 	},
 

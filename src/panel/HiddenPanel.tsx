@@ -1,10 +1,11 @@
-import { CSSProperties, ReactElement } from 'react';
+import { ReactElement } from 'react';
+import { StyleSheet, css } from 'aphrodite/no-important';
+
+import { AnchorLegContext } from '../common/contexts';
+import { abnormalHeightDefect, isAndroidChrome, isIOSChrome, isIOSSafari } from '../common/utils';
 
 import useHiddenPanel from './useHiddenPanel';
-import { StyleSheet, StyleSheetStatic, css } from 'aphrodite/no-important';
-import { AnchorLegContext } from '../common/contexts';
-import styles from './Panel.style';
-import { abnormalHeightDefect, isAndroidChrome, isIOSChrome, isIOSSafari } from '../common/utils';
+import styles from './Panel.styles';
 
 const HiddenPanel: (props: { children: ReactElement[] }) => ReactElement = ({ children }) => {
 	const { anchorLeg, setAnchorLeg, dummyRef } = useHiddenPanel();
